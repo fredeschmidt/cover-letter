@@ -4,9 +4,14 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { pair } from "@/lib/motion";
 
-const links = [
-  { href: "#tænker", label: "Tankegang" },
-  { href: "#arbejder", label: "Arbejde" },
+type NavLink = { href: string; label: string; activeIds?: readonly string[] };
+
+const links: readonly NavLink[] = [
+  {
+    href: "#ai-praksis",
+    label: "AI-praksis",
+    activeIds: ["ai-praksis", "tænker", "arbejder", "skills"],
+  },
   { href: "#projekter", label: "Projekter" },
   { href: "#cv", label: "CV" },
   { href: "#kontakt", label: "Kontakt" },
@@ -20,17 +25,20 @@ export function TopNav() {
     const onScroll = () => {
       setScrolled(window.scrollY > 50);
 
-      // Find the section currently in view
-      const ids = links.map((l) => l.href.slice(1));
       let current: string | null = null;
-      for (const id of ids) {
-        const el = document.getElementById(id);
-        if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= 200 && rect.bottom > 200) {
-          current = id;
-          break;
+      for (const link of links) {
+        const id = link.href.slice(1);
+        const ids = link.activeIds ?? [id];
+        for (const checkId of ids) {
+          const el = document.getElementById(checkId);
+          if (!el) continue;
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 200 && rect.bottom > 200) {
+            current = id;
+            break;
+          }
         }
+        if (current) break;
       }
       setActive(current);
     };

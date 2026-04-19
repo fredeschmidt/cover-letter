@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { MonimoPreview } from "@/components/monimo-preview";
 import { JobsoegningPreview } from "@/components/jobsoegning-preview";
+import { TV2RegPreview } from "@/components/tv2reg-preview";
 import { pair } from "@/lib/motion";
 import type { Project } from "@/lib/profile";
 
@@ -43,6 +44,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
 
         {project.slug === "monimo" ? <MonimoPreview /> : null}
         {project.slug === "jobsoegningsapp" ? <JobsoegningPreview /> : null}
+        {project.slug === "tv2reg-designsystem" ? <TV2RegPreview /> : null}
 
         <div>
           <div className="mb-1.5 text-xs text-[var(--color-violet)]">Problem</div>

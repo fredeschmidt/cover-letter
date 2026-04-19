@@ -29,7 +29,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="da" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="da" className={`${geistSans.variable} ${geistMono.variable} scroll-smooth`}>
       <body className="min-h-screen">
         <div className="aurora" aria-hidden>
           <div className="aurora__orb aurora__orb--violet-1" />

@@ -24,49 +24,47 @@ export const projects: Project[] = [
   {
     slug: "monimo",
     title: "Monimo",
-    tagline: "AI-drevet personlig økonomi-rådgivning.",
+    tagline: "Personligt overblik samt rådgivning af dit budget.",
     year: "2026",
     status: "aktiv",
-    stack: ["Next.js", "Drizzle ORM", "AI-integration", "Tailwind", "TypeScript"],
+    stack: ["Next.js", "Tailwind", "shadcn/ui", "Vercel"],
     problem:
-      "Jeg ville give andre den ro omkring økonomi, jeg selv får af et detaljeret budget — men i en form langt lettere at forstå og bruge end et Excel-ark.",
+      "Jeg vil give andre den ro omkring økonomi, jeg selv får af et detaljeret budget — gennem et overskueligt overblik og konkrete anbefalinger.",
     process: [
-      "Skitserede brugerflow ud fra mit eget budget-workflow.",
-      "Byggede budget-overblik, optimerings-score og lånesammenligning.",
-      "Tilføjede AI-lag der genererer konkrete besparelsesforslag.",
-      "Lagde gamification (achievements) ovenpå for at holde folk engageret.",
-      "Byggede et agent-testpanel: personas → projektleder-agent → UX + product designer — tester og forbedrer produktet løbende.",
+      "Skitserede brugerflowet ud fra mit eget budget-rituale og gav det videre til AI'en som kontekst.",
+      "AI'en foreslår et budget-udkast brugeren kan tilpasse.",
+      "Agent-testpanel (PM + UX + product designer) forbedrer produktet løbende.",
     ],
   },
   {
     slug: "jobsoegningsapp",
     title: "Jobsøgningsapp",
-    tagline: "Personligt værktøj til at matche, vurdere og skrive ansøgninger.",
+    tagline: "Personligt værktøj der finder relevante jobopslag, scorer matchet og skriver skræddersyede ansøgninger.",
     year: "2026",
     status: "i drift",
-    stack: ["Next.js 16", "React 19", "Tailwind v4", "shadcn/ui", "localStorage"],
+    stack: ["Next.js", "Tailwind", "shadcn/ui", "localStorage"],
     problem:
       "Jobsøgning kræver overblik, research og personlige ansøgninger. Jeg ville have ét sted der samler jobopslag, vurderer match og skriver skræddersyede ansøgninger i min stemme.",
     process: [
-      "Modellerede profil, drømmearbejdsplads, skrivestil og tidligere ansøgninger som markdown + TypeScript-typer.",
-      "Implementerede Job Match Rating på fire dimensioner.",
+      "Modellerede mig selv som konteksten AI'en bygger på: profil, drømmearbejdsplads, skrivestil og tidligere ansøgninger.",
+      "Match-score viser med ét blik hvor godt et jobopslag passer til min profil og drømmearbejdsplads.",
       "Byggede like/skjul-system til at holde overblik.",
       "Integrerede AI til ansøgningsgenerering baseret på profil + skrivestil.",
     ],
   },
   {
     slug: "tv2reg-designsystem",
-    title: "tv2reg-designsystem",
+    title: "TV2 Regionernes designsystem",
     tagline: "Designsystem til TV2 Regionerne med Figma + MCP.",
-    year: "2025",
+    year: "2026",
     status: "i drift",
     stack: ["Figma", "MCP", "TypeScript", "Designsystem"],
     problem:
       "TV2 Regionerne manglede et samlet designsystem der kunne tilgås både af designere og udviklere — og nu også af agents.",
     process: [
-      "Byggede MCP-integration mod Figma-designsystemet.",
-      "Sørgede for at agents kan hente tokens og komponenter direkte.",
-      "Brugte det internt hos TV2 Østjylland til at holde forsideidentitet konsistent.",
+      "Opsatte MCP-integration mod Figma.",
+      "Overførte sitets komponenter til Figma — organiseret i komponentsamlinger der skifter tema via tokens.",
+      "Bruges internt hos TV2 Regionerne for at holde sitene konsistente.",
     ],
   },
 ];
@@ -88,7 +86,7 @@ export const roles: RoleNode[] = [
     period: "Nu",
     domains: ["ai"],
     highlight:
-      "Bygger custom Claude Code skills, MCP-servere (Linear, Figma), agent-workflows og prompt engineering.",
+      "Bygger og forfiner custom Claude Code skills, MCP-integrationer (Figma, Linear) og agent-teams der tester og forbedrer mine egne produkter.",
   },
   {
     id: "monimo-product",
@@ -96,7 +94,8 @@ export const roles: RoleNode[] = [
     company: "Eget projekt",
     period: "2026",
     domains: ["ai", "product", "frontend"],
-    highlight: "AI-drevet økonomi-app designet og bygget selvstændigt.",
+    highlight:
+      "AI-drevet budget-app der skaber ro gennem overskueligt overblik og konkrete anbefalinger — bygget selvstændigt og testet løbende af et eget agent-team.",
   },
   {
     id: "tv2oj-pm",

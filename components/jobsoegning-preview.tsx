@@ -176,8 +176,8 @@ export function JobsoegningPreview() {
           {/* Rings + matches */}
           <div className="grid grid-cols-[auto_1fr_1fr] gap-3">
             <div className="flex flex-col items-center gap-2 border-r border-white/10 pr-3">
-              <ScoreRing value={88} label="Profil" color="#5ad897" />
-              <ScoreRing value={76} label="Arbejdsplads" color="#8a72ff" />
+              <ScoreRing value={100} label="Profil" color="#5ad897" />
+              <ScoreRing value={75} label="Arbejdsplads" color="#8a72ff" />
             </div>
             <MatchColumn title="Profil" items={profileMatch} />
             <MatchColumn title="Arbejdsplads" items={dreamMatch} />

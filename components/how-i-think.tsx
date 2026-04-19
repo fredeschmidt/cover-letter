@@ -65,10 +65,12 @@ const chatSteps: Step[] = [
     avatar: <MeAvatar />,
     body: (
       <>
-        Jeg vil gerne bygge en platform, Monimo, som skal hjælpe unge voksne
-        med at få overblik over deres økonomi. Hele konceptet er at det skal
-        være SUPER nemt at starte sit budget og holde overblikket, som skal
-        resultere i at brugerne kan få ro i maven over deres økonomi…
+        Hjælp med at udtænke en plan for at bygge et projekt, der skal gøre
+        det nemt at opsætte budgetter. Jeg vil gerne bygge en platform,
+        Monimo, som skal hjælpe unge voksne med at få overblik over deres
+        økonomi. Hele konceptet er at det skal være SUPER nemt at starte sit
+        budget og holde overblikket, som skal resultere i at brugerne kan få
+        ro i maven over deres økonomi…
       </>
     ),
     align: "end",
@@ -167,7 +169,7 @@ export function HowIThink() {
   return (
     <Section
       id="tænker"
-      eyebrow="Sådan tænker jeg"
+      eyebrow="01 · Sådan tænker jeg"
       title="Det er kun fantasien der sætter grænser nu."
       intro={
         <>

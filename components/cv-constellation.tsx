@@ -114,7 +114,7 @@ export function CvConstellation() {
       id="cv"
       eyebrow="CV"
       title="Min vej hertil."
-      intro="Snart 10 år som frontend-udvikler. Undervejs blevet projektleder, og sidste år dykket dybt ned i AI og agent-workflows."
+      intro="Snart 10 år som frontend-udvikler. Undervejs blevet teknisk projektleder for et frontend-team, og sidste år dykket dybt ned i AI og agent-workflows."
     >
       {/* Now section */}
       <div className="mb-10">
