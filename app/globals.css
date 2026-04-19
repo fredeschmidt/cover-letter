@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #07080f;
+  --color-foreground: #eef0f6;
+  --color-card: #0f1220;
+  --color-card-foreground: #eef0f6;
+  --color-muted: #161a2b;
+  --color-muted-foreground: #8990b0;
+  --color-border: rgba(255, 255, 255, 0.08);
+
+  --color-primary: #6e4df5;
+  --color-primary-foreground: #ffffff;
+
+  --color-violet: #8a72ff;
+  --color-violet-dim: #6e4df5;
+  --color-violet-soft: rgba(110, 77, 245, 0.16);
+
+  --color-lime: #5ad897;
+  --color-lime-dim: #3bb77a;
+  --color-lime-soft: rgba(59, 183, 122, 0.14);
+
+  --color-coral: #ff6279;
+  --color-coral-soft: rgba(231, 62, 86, 0.14);
+  --color-amber: #ffb83a;
+  --color-amber-soft: rgba(235, 158, 23, 0.14);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --radius: 1rem;
+}
+
+html {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  color-scheme: dark;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01", "ss03", "cv11";
+}
+
+body {
+  min-height: 100vh;
+  background: transparent;
+}
+
+/* Aurora — slow drifting glow orbs */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+body > :not(.aurora) {
+  position: relative;
+  z-index: 1;
+}
+.aurora__orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(100px);
+  will-change: transform;
+}
+
+@keyframes aurora-drift-1 {
+  0%   { transform: translate(0%, 0%) scale(1); }
+  33%  { transform: translate(8%, 12%) scale(1.1); }
+  66%  { transform: translate(-4%, 18%) scale(0.95); }
+  100% { transform: translate(0%, 0%) scale(1); }
+}
+@keyframes aurora-drift-2 {
+  0%   { transform: translate(0%, 0%) scale(1); }
+  50%  { transform: translate(-12%, 10%) scale(1.15); }
+  100% { transform: translate(0%, 0%) scale(1); }
+}
+@keyframes aurora-drift-3 {
+  0%   { transform: translate(0%, 0%) scale(1); }
+  40%  { transform: translate(10%, -8%) scale(0.9); }
+  80%  { transform: translate(-6%, 6%) scale(1.1); }
+  100% { transform: translate(0%, 0%) scale(1); }
+}
+@keyframes aurora-drift-4 {
+  0%   { transform: translate(0%, 0%) scale(1); }
+  50%  { transform: translate(6%, -12%) scale(1.2); }
+  100% { transform: translate(0%, 0%) scale(1); }
+}
+
+.aurora__orb--violet-1 {
+  top: -14%;
+  left: -6%;
+  width: 36vw;
+  height: 22vw;
+  max-width: 900px;
+  max-height: 500px;
+  background: radial-gradient(ellipse, rgba(110, 77, 245, 0.38) 0%, transparent 60%);
+  animation: aurora-drift-1 28s ease-in-out infinite;
+}
+.aurora__orb--lime {
+  top: -12%;
+  right: -8%;
+  width: 32vw;
+  height: 20vw;
+  max-width: 800px;
+  max-height: 460px;
+  background: radial-gradient(ellipse, rgba(90, 216, 151, 0.25) 0%, transparent 60%);
+  animation: aurora-drift-2 34s ease-in-out infinite;
+}
+.aurora__orb--violet-2 {
+  bottom: -16%;
+  right: -10%;
+  width: 28vw;
+  height: 18vw;
+  max-width: 700px;
+  max-height: 420px;
+  background: radial-gradient(ellipse, rgba(138, 114, 255, 0.28) 0%, transparent 60%);
+  animation: aurora-drift-3 40s ease-in-out infinite;
+}
+.aurora__orb--amber {
+  bottom: -14%;
+  left: -10%;
+  width: 24vw;
+  height: 16vw;
+  max-width: 600px;
+  max-height: 360px;
+  background: radial-gradient(ellipse, rgba(235, 158, 23, 0.18) 0%, transparent 60%);
+  animation: aurora-drift-4 44s ease-in-out infinite;
+}
+
+::selection {
+  background: var(--color-violet);
+  color: var(--color-background);
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1f2339; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #2a2e4a; }
+
+html, body { overflow-x: clip; }
+
+/* Display heading utility */
+.display {
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+/* Brand gradient text — for accent headings */
+.brand-gradient-text {
+  background: linear-gradient(135deg, #8a72ff 0%, #6e4df5 55%, #5a3ae0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Dot pulse like device pairing */
+@keyframes dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-lime) 50%, transparent); }
+  50%      { box-shadow: 0 0 0 8px transparent; }
+}
+.dot-pulse { animation: dot-pulse 2s ease-out infinite; }
