@@ -124,11 +124,12 @@ export const roles: RoleNode[] = [
   },
   {
     id: "tv2oj-fe",
-    title: "Frontender",
+    title: "Kreativ frontender",
     company: "TV2 Østjylland",
     period: "jun 2019 – okt 2024",
     domains: ["frontend"],
-    highlight: "CMS, hjemmeside, webdoks, brugeroplevelse.",
+    highlight:
+      "På TV2 Østjylland arbejdede jeg som frontendudvikler på hjemmesiden, der hver dag leverer nyheder målrettet østjyderne.\n\nJeg har udviklet og implementeret sitet på nye CMS'er (af flere omgange), skræddersyet det til journalisternes behov og ført en ny visuel identitet ud på siden. Sideløbende har jeg undersøgt adfærden hos de 100.000 daglige besøgende og fået dyb indsigt i, hvordan læserne bruger indholdet — en viden jeg har brugt til at forme sitet med stærkt UX-fokus, så det blev mere intuitivt og engagerende. Derudover har jeg bygget en række webdoks: dybdegående, visuelle formater, der løfter graverjournalistik på en kreativ måde.\n\nI rollen har jeg selv haft overblikket over projekterne og samarbejdet tæt med de andre TV2-regioner.",
   },
   {
     id: "nodes",
@@ -144,7 +145,8 @@ export const roles: RoleNode[] = [
     company: "Cabana",
     period: "aug 2016 – dec 2019",
     domains: ["frontend"],
-    highlight: "Frontend for Koda, Studieskolen, Forenede Service.",
+    highlight:
+      "Cabana er et digitalt webbureau. Her havde jeg ansvaret for frontenden hos kunder, som bl.a. Koda, Studieskolen og Forenede Service. Desuden arbejdede jeg med optimering af brugeroplevelse, samt kundekontakten med Koda.",
   },
   {
     id: "rowdy",
@@ -152,7 +154,8 @@ export const roles: RoleNode[] = [
     company: "Rowdy",
     period: "nov 2013 – aug 2018",
     domains: ["leadership"],
-    highlight: "Koordinerede op til 60 frivillige til Northside, Tinderbox, Haven, DMA, Eurovision.",
+    highlight:
+      "Hos Rowdy arrangerede og afviklede vi større events, som artistområderne på festivalerne Northside, Tinderbox og Haven, efterfesten til Danish Music Awards, green room til Eurovision, overrækkelsen af Gaffa prisen og meget mere.\n\nI rollen som projektkoordinator var jeg bl.a. ansvarlig for planlægningen og eksekveringen af festivalsområder, med særligt fokus på at skabe et behageligt og kreativt miljø for festivalens artister. Derudover stod jeg for at motivere og engagere et hold med op mod 60 frivillige til at opbygge, afvikle og nedpakke dette område, samt at have overblikket over at alle opgaverne blev løst undervejs.",
   },
 ];
 
