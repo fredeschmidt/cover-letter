@@ -14,7 +14,7 @@ export default function Page() {
       <Hero />
       <section
         id="ai-praksis"
-        className="mx-auto w-full max-w-3xl scroll-mt-24 px-6 pt-16 md:pt-24"
+        className="mx-auto w-full max-w-3xl scroll-mt-24 px-6 pb-16 pt-16 md:pb-24 md:pt-24"
       >
         <h2 className="display text-balance text-3xl leading-[1.1] md:text-5xl">
           Sådan arbejder jeg med AI

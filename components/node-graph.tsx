@@ -14,6 +14,7 @@ export type Node = {
   y: number;
   tone: NodeTone;
   multi?: boolean;
+  wide?: boolean;
 };
 
 export type Edge = {
@@ -250,14 +251,12 @@ export function NodeGraph({
               }}
               className={
                 compact
-                  ? "absolute -translate-x-1/2 -translate-y-1/2 cursor-help rounded-full border px-2.5 py-1 text-[11px] font-medium backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:px-3 md:py-1.5 md:text-xs"
-                  : "absolute -translate-x-1/2 -translate-y-1/2 cursor-help rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:px-4 md:py-2 md:text-sm"
+                  ? `absolute ${n.wide ? "max-w-[140px]" : "max-w-[82px]"} -translate-x-1/2 -translate-y-1/2 cursor-help whitespace-pre-line break-words rounded-[1.1rem] md:whitespace-nowrap border px-1.5 py-0.5 text-center text-[9px] font-medium leading-[1.15] backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:max-w-[480px]! md:rounded-full md:px-3 md:py-1.5 md:text-xs md:leading-none`
+                  : `absolute ${n.wide ? "max-w-[130px]" : "max-w-[96px]"} -translate-x-1/2 -translate-y-1/2 cursor-help whitespace-pre-line break-words rounded-[1.1rem] md:whitespace-nowrap border px-2 py-0.5 text-center text-[10px] font-medium leading-[1.15] backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:max-w-[480px]! md:rounded-full md:px-4 md:py-2 md:text-sm md:leading-none`
               }
             >
-              <span className="inline-flex items-center">
-                {n.multi ? <MultiDots color={cfg.color} /> : null}
-                {n.label}
-              </span>
+              {n.multi ? <MultiDots color={cfg.color} /> : null}
+              {n.label}
             </motion.button>
           );
         })}
@@ -303,7 +302,8 @@ export function NodeGraph({
               <path d="M4 4 L12 20 L14 13 L21 11 Z" />
             </svg>
             <span className="font-medium">
-              Hold musen over en node for at læse hvad den gør
+              <span className="md:hidden">Tryk på en node for at læse hvad den gør</span>
+              <span className="hidden md:inline">Hold musen over en node for at læse hvad den gør</span>
             </span>
           </div>
         )}

@@ -8,7 +8,7 @@ const nodes: readonly Node[] = [
     id: "personas",
     label: "Personas",
     desc: "Flere simulerede brugere der tester produktet som rigtige mennesker — hver med deres egen baggrund, behov og frustrationer.",
-    x: 6,
+    x: 8,
     y: 50,
     tone: "orange",
     multi: true,
@@ -17,7 +17,7 @@ const nodes: readonly Node[] = [
     id: "pm",
     label: "Projektleder-agent",
     desc: "Modtager feedback fra personaerne, prioriterer mod produktets vision og uddelegerer til specialister.",
-    x: 32,
+    x: 36,
     y: 50,
     tone: "lime",
   },
@@ -47,11 +47,12 @@ const nodes: readonly Node[] = [
   },
   {
     id: "build",
-    label: "Implementering",
+    label: "Imple\u00ADmentering",
     desc: "Mig + Claude Code bygger løsningen. Produktet går live, og personaerne tester igen.",
-    x: 94,
+    x: 90,
     y: 50,
     tone: "pink",
+    wide: true,
   },
 ];
 

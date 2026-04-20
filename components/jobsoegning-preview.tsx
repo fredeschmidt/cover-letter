@@ -174,8 +174,8 @@ export function JobsoegningPreview() {
           </div>
 
           {/* Rings + matches */}
-          <div className="grid grid-cols-[auto_1fr_1fr] gap-3">
-            <div className="flex flex-col items-center gap-2 border-r border-[var(--color-border)] pr-3">
+          <div className="grid gap-3 md:grid-cols-[auto_1fr_1fr]">
+            <div className="flex items-center justify-center gap-6 border-b border-[var(--color-border)] pb-3 md:flex-col md:justify-start md:gap-2 md:border-b-0 md:border-r md:pb-0 md:pr-3">
               <ScoreRing value={100} label="Profil" color="#edb4f8" />
               <ScoreRing value={75} label="Arbejdsplads" color="#feb985" />
             </div>

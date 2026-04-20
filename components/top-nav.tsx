@@ -69,7 +69,7 @@ export function TopNav() {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className={`relative block rounded-full px-3 py-1.5 text-xs font-medium transition-colors md:px-4 md:text-sm ${
+                  className={`relative block whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors md:px-4 md:text-sm ${
                     isActive
                       ? "text-[var(--color-foreground)]"
                       : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"

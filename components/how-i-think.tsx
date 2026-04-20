@@ -22,7 +22,7 @@ const stages: readonly Stage[] = [
   { id: "ai", label: "AI", sub: "tygger det", tone: "lilla", icon: "star" },
   {
     id: "start",
-    label: "Udgangspunkt",
+    label: "Udgangs\u00ADpunkt",
     sub: "første udkast",
     tone: "lilla",
     icon: "card",
@@ -220,7 +220,7 @@ export function HowIThink() {
                   </div>
                 </div>
                 <div
-                  className="text-[10px] font-bold uppercase tracking-[0.16em] md:text-[11px]"
+                  className="break-words text-[9px] font-bold uppercase leading-tight tracking-[0.06em] md:text-[11px] md:tracking-[0.16em]"
                   style={{
                     color:
                       stage.tone === "muted"
@@ -230,7 +230,7 @@ export function HowIThink() {
                 >
                   {stage.label}
                 </div>
-                <div className="mt-1 text-[11px] leading-tight text-[var(--color-muted-foreground)] md:text-xs">
+                <div className="mt-1 text-[10px] leading-tight text-[var(--color-muted-foreground)] md:text-xs">
                   {stage.sub}
                 </div>
               </motion.div>

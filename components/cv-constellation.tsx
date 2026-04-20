@@ -35,7 +35,7 @@ function RoleItem({ role, index }: { role: RoleNode; index: number }) {
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ ...pair, delay: index * 0.05 }}
-      className="relative pl-10"
+      className="relative pl-7 md:pl-10"
     >
       {/* Timeline dot */}
       <span
@@ -111,12 +111,13 @@ export function CvConstellation() {
   const pastRoles = roles.filter((r) => !isCurrent(r));
 
   return (
-    <Section
-      id="cv"
-      eyebrow="CV"
-      title="Min vej hertil."
-      intro="Snart 10 år som frontend-udvikler. Undervejs blevet teknisk projektleder for et frontend-team, og sidste år dykket dybt ned i AI og agent-workflows."
-    >
+    <Section id="cv" className="px-4 md:px-6">
+      <h2 className="display mb-4 text-balance text-3xl leading-[1.1] md:text-5xl">
+        CV
+      </h2>
+      <p className="mb-10 max-w-2xl leading-relaxed text-[var(--color-muted-foreground)]">
+        Snart 10 år som frontend-udvikler. Undervejs blevet teknisk projektleder for et frontend-team, og sidste år dykket dybt ned i AI og agent-workflows.
+      </p>
       {/* Now section */}
       <div className="mb-10">
         <div className="mb-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-lime)]">
@@ -157,7 +158,7 @@ export function CvConstellation() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ ...pair, delay: i * 0.05 }}
-                className="relative pl-10"
+                className="relative pl-7 md:pl-10"
               >
                 <span
                   className="absolute left-[10px] top-[10px] z-10 h-3 w-3 -translate-x-1/2 rounded-full"
