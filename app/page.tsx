@@ -19,13 +19,13 @@ export default function Page() {
         <h2 className="display text-balance text-3xl leading-[1.1] md:text-5xl">
           Sådan arbejder jeg med AI
         </h2>
-        <p className="mt-4 max-w-2xl leading-relaxed text-[var(--color-muted-foreground)]">
-          Tre lag af samme praksis: hvordan jeg tænker, hvordan jeg arbejder, og hvordan jeg gør AI&rsquo;en skarpere over tid.
-        </p>
+
+        <div className="relative mt-10 md:mt-14">
+          <HowIThink />
+          <HowIWork />
+          <HowIBuildSkills />
+        </div>
       </section>
-      <HowIThink />
-      <HowIWork />
-      <HowIBuildSkills />
       <Projects />
       <CvConstellation />
       <Contact />

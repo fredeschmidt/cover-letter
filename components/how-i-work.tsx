@@ -77,11 +77,13 @@ export function HowIWork() {
   return (
     <Section
       id="arbejder"
-      eyebrow="02 · Sådan arbejder jeg"
+      variant="chapter"
+      chapterNumber={2}
+      eyebrow="Sådan arbejder jeg"
       title="Jeg bygger ikke bare med AI — jeg bygger agent-teams."
       intro="Da jeg byggede Monimo, satte jeg et agent-team op til at teste og forbedre produktet. Flere personas tester, en projektleder-agent prioriterer, og et lille hold af specialister eksekverer."
     >
-      <NodeGraph nodes={nodes} edges={edges} idPrefix="work" />
+      <NodeGraph nodes={nodes} edges={edges} idPrefix="work" compact />
     </Section>
   );
 }

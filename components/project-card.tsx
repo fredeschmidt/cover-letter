@@ -19,7 +19,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
     >
       <div className="flex items-center gap-4 p-5 md:gap-5 md:p-6">
         <div className="flex-1">
-          <h3 className="text-lg font-medium md:text-xl">{project.title}</h3>
+          <h3 className="text-lg font-bold md:text-xl">{project.title}</h3>
           <p className="mt-0.5 text-sm text-[var(--color-muted-foreground)]">
             {project.tagline}
           </p>

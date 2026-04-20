@@ -48,7 +48,7 @@ const surplusColorStyle = { color: "#141414" } as const;
 export function MonimoPreview() {
   return (
     <motion.a
-      href="https://monimo.dk/budget"
+      href="https://monimo.dk/"
       target="_blank"
       rel="noopener noreferrer"
       initial={{ opacity: 0, y: 12 }}

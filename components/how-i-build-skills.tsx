@@ -66,11 +66,20 @@ export function HowIBuildSkills() {
   return (
     <Section
       id="skills"
-      eyebrow="03 · Sådan bygger jeg skills"
+      variant="chapter"
+      chapterNumber={3}
+      isLastChapter
+      eyebrow="Sådan bygger jeg skills"
       title="Jeg bruger ikke bare skills — jeg bygger og forfiner mine egne."
       intro="Når noget skal gentages, beder jeg først AI'en løse opgaven. Når jeg er tilfreds, kodificerer vi løsningen som en skill. Næste gang den ikke rammer plet, fodrer jeg den med mere kontekst — så den bliver skarpere for hver iteration."
     >
-      <NodeGraph nodes={nodes} edges={edges} idPrefix="skills" />
+      <NodeGraph
+        nodes={nodes}
+        edges={edges}
+        idPrefix="skills"
+        compact
+        topSpacing="mt-6 md:mt-8"
+      />
     </Section>
   );
 }

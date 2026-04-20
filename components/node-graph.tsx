@@ -91,10 +91,14 @@ export function NodeGraph({
   nodes,
   edges,
   idPrefix,
+  compact = false,
+  topSpacing,
 }: {
   nodes: readonly Node[];
   edges: readonly Edge[];
   idPrefix: string;
+  compact?: boolean;
+  topSpacing?: string;
 }) {
   const [hover, setHover] = useState<string | null>(null);
 
@@ -110,7 +114,13 @@ export function NodeGraph({
 
   return (
     <>
-      <div className="relative mt-8 aspect-[2/1] w-full md:mt-12">
+      <div
+        className={
+          compact
+            ? `relative ${topSpacing ?? "mt-14 md:mt-20"} aspect-[2.2/1] w-full`
+            : "relative mt-8 aspect-[2/1] w-full md:mt-12"
+        }
+      >
         <svg
           viewBox="0 0 100 50"
           preserveAspectRatio="none"
@@ -238,7 +248,11 @@ export function NodeGraph({
                 boxShadow: isActive ? cfg.glow : "none",
                 color: "var(--color-foreground)",
               }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 cursor-help rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:px-4 md:py-2 md:text-sm"
+              className={
+                compact
+                  ? "absolute -translate-x-1/2 -translate-y-1/2 cursor-help rounded-full border px-2.5 py-1 text-[11px] font-medium backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:px-3 md:py-1.5 md:text-xs"
+                  : "absolute -translate-x-1/2 -translate-y-1/2 cursor-help rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:px-4 md:py-2 md:text-sm"
+              }
             >
               <span className="inline-flex items-center">
                 {n.multi ? <MultiDots color={cfg.color} /> : null}
@@ -249,7 +263,13 @@ export function NodeGraph({
         })}
       </div>
 
-      <div className="mt-6 min-h-[2.5rem] text-center text-sm leading-relaxed">
+      <div
+        className={
+          compact
+            ? "mt-4 min-h-[2rem] text-center text-xs leading-relaxed"
+            : "mt-6 min-h-[2.5rem] text-center text-sm leading-relaxed"
+        }
+      >
         {current ? (
           <motion.div
             key={current.id}
@@ -269,8 +289,22 @@ export function NodeGraph({
             </span>
           </motion.div>
         ) : (
-          <div className="text-[var(--color-muted-foreground)]">
-            Hold musen over en node for at læse hvad den gør.
+          <div className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_oklab,var(--color-lilla)_30%,transparent)] bg-[color-mix(in_oklab,var(--color-lilla)_6%,transparent)] px-3 py-1.5 text-[var(--color-foreground)]">
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden
+              className="h-3.5 w-3.5 shrink-0 text-[var(--color-lilla)]"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M4 4 L12 20 L14 13 L21 11 Z" />
+            </svg>
+            <span className="font-medium">
+              Hold musen over en node for at læse hvad den gør
+            </span>
           </div>
         )}
       </div>
