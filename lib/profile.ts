@@ -104,7 +104,7 @@ export const roles: RoleNode[] = [
     period: "feb 2025 – nu",
     domains: ["frontend", "leadership"],
     highlight:
-      "Leder et frontend-team, bindeled mellem journalister og udviklere. Førte huset trygt gennem KV25.",
+      "Min største styrke er at være bindeleddet mellem de tekniske og ikke-tekniske kollegaer. Jeg oversætter behov til opgaver, prioriterer, fordeler til mit team og sikrer at hele huset altid ved hvad der arbejdes på. Jeg afholder også 1-1 med mine kollegaer for at sikre deres potentiale og motivation bliver brugt bedst muligt og dermed også deres trivsel.\n\nDa jeg kom tilbage til TV2ØJ, var vi midt i et større CMS-skifte med mange fejl, høj frustration og lav gennemsigtighed i fremdriften. Jeg fik vendt skuden ved at skabe overblik, prioritere benhårdt og indføre fast og tydelig statuskommunikation, så huset følte sig oplyst og trygt igen.\n\nSideløbende var jeg med til at idéudvikle en ny forside og visuel identitet og førte den fra afklaring til udvikling til lancering. Resultatet blev taget ekstremt godt imod og gjorde sitet mere nutidigt og sammenhængende.\n\nDa kommunalvalget nærmede sig, førte jeg os sikkert i mål gennem konkrete handlingsplaner, løbende forventningsafstemning og nødplaner. Vi stod med ro, overskud og et forløb der gik over forventning.",
   },
   {
     id: "illumi",

@@ -97,9 +97,11 @@ function RoleItem({ role, index }: { role: RoleNode; index: number }) {
             · {role.company}
           </span>
         </div>
-        <p className="mt-1 text-xs leading-relaxed text-[var(--color-muted-foreground)]">
-          {role.highlight}
-        </p>
+        <div className="mt-1 space-y-2 text-xs leading-relaxed text-[var(--color-muted-foreground)]">
+          {role.highlight.split("\n\n").map((paragraph, i) => (
+            <p key={i}>{paragraph}</p>
+          ))}
+        </div>
       </div>
     </motion.li>
   );
