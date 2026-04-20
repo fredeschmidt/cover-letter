@@ -15,7 +15,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ ...pair, delay: index * 0.08 }}
-      className="overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-card)]"
+      className="overflow-hidden rounded-3xl border border-[var(--color-lilla)] bg-[var(--color-card)]"
     >
       <div className="flex items-center gap-4 p-5 md:gap-5 md:p-6">
         <div className="flex-1">
@@ -47,12 +47,12 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
         {project.slug === "tv2reg-designsystem" ? <TV2RegPreview /> : null}
 
         <div>
-          <div className="mb-1.5 text-xs text-[var(--color-violet)]">Problem</div>
+          <div className="mb-1.5 text-xs text-[var(--color-lilla)]">Problem</div>
           <p className="leading-relaxed">{project.problem}</p>
         </div>
 
         <div>
-          <div className="mb-2 text-xs text-[var(--color-violet)]">
+          <div className="mb-2 text-xs text-[var(--color-lilla)]">
             Sådan byggede jeg det
           </div>
           <ol className="space-y-1.5 text-sm">
@@ -65,7 +65,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
                 transition={{ ...pair, delay: i * 0.05 }}
                 className="flex gap-3 text-[var(--color-muted-foreground)]"
               >
-                <span className="mt-[0.5em] h-1 w-1 shrink-0 rounded-full bg-[var(--color-violet)]" />
+                <span className="mt-[0.5em] h-1 w-1 shrink-0 rounded-full bg-[var(--color-lilla)]" />
                 <span className="leading-relaxed">{step}</span>
               </motion.li>
             ))}

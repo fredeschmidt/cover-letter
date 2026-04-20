@@ -10,7 +10,7 @@ const nodes: readonly Node[] = [
     desc: "Flere simulerede brugere der tester produktet som rigtige mennesker — hver med deres egen baggrund, behov og frustrationer.",
     x: 6,
     y: 50,
-    tone: "neutral",
+    tone: "orange",
     multi: true,
   },
   {
@@ -19,7 +19,7 @@ const nodes: readonly Node[] = [
     desc: "Modtager feedback fra personaerne, prioriterer mod produktets vision og uddelegerer til specialister.",
     x: 32,
     y: 50,
-    tone: "violet",
+    tone: "lime",
   },
   {
     id: "ux",
@@ -51,22 +51,22 @@ const nodes: readonly Node[] = [
     desc: "Mig + Claude Code bygger løsningen. Produktet går live, og personaerne tester igen.",
     x: 94,
     y: 50,
-    tone: "violet",
+    tone: "pink",
   },
 ];
 
 const edges: readonly Edge[] = [
-  { from: "personas", to: "pm", tone: "violet", delay: 0 },
+  { from: "personas", to: "pm", tone: "orange", delay: 0 },
   { from: "pm", to: "ux", tone: "lime", delay: 0.4 },
   { from: "pm", to: "design", tone: "lime", delay: 0.8 },
   { from: "pm", to: "copy", tone: "lime", delay: 1.2 },
-  { from: "ux", to: "build", tone: "violet", delay: 1.6 },
-  { from: "design", to: "build", tone: "violet", delay: 2.0 },
-  { from: "copy", to: "build", tone: "violet", delay: 2.4 },
+  { from: "ux", to: "build", tone: "lime", delay: 1.6 },
+  { from: "design", to: "build", tone: "lime", delay: 2.0 },
+  { from: "copy", to: "build", tone: "lime", delay: 2.4 },
   {
     from: "build",
     to: "personas",
-    tone: "violet",
+    tone: "pink",
     delay: 2.8,
     curve: (a, b) =>
       `M ${a.x} ${a.y / 2} C ${a.x + 5} ${-15}, ${b.x - 5} ${-15}, ${b.x} ${b.y / 2}`,

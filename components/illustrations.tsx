@@ -1,4 +1,4 @@
-const VIOLET = "var(--color-violet)";
+const LILLA = "var(--color-lilla)";
 const LIME = "var(--color-lime)";
 
 export function DomainIcon({
@@ -8,7 +8,7 @@ export function DomainIcon({
   domain: "frontend" | "ai" | "leadership" | "product";
   className?: string;
 }) {
-  const color = domain === "ai" || domain === "product" ? LIME : VIOLET;
+  const color = domain === "ai" || domain === "product" ? LIME : LILLA;
   return (
     <svg viewBox="0 0 16 16" className={className} fill="none">
       {domain === "frontend" && (

@@ -57,8 +57,8 @@ export function TopNav() {
       <nav
         className={`flex items-center gap-1 rounded-full border px-2 py-1.5 backdrop-blur-xl transition-all duration-500 ${
           scrolled
-            ? "border-[var(--color-border)] bg-[rgba(15,18,32,0.7)] shadow-[0_8px_40px_-12px_rgba(0,0,0,0.5)]"
-            : "border-white/5 bg-[rgba(15,18,32,0.35)]"
+            ? "border-[var(--color-border)] bg-[rgba(255,254,236,0.8)] shadow-[0_8px_40px_-12px_rgba(20,20,20,0.15)]"
+            : "border-[rgba(20,20,20,0.08)] bg-[rgba(255,254,236,0.55)]"
         }`}
       >
         <ul className="flex items-center gap-0.5">
@@ -79,7 +79,7 @@ export function TopNav() {
                     <motion.span
                       layoutId="nav-active"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                      className="absolute inset-0 rounded-full bg-white/8"
+                      className="absolute inset-0 rounded-full bg-[var(--color-lilla-soft)]"
                     />
                   ) : null}
                   <span className="relative">{link.label}</span>

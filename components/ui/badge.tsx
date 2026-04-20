@@ -9,9 +9,12 @@ const badgeVariants = cva(
       variant: {
         default:
           "border border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-muted-foreground)]",
-        violet:
-          "border border-[color-mix(in_oklab,var(--color-violet)_25%,transparent)] bg-[var(--color-violet-soft)] text-[var(--color-violet)]",
+        lilla:
+          "border border-[color-mix(in_oklab,var(--color-lilla)_25%,transparent)] bg-[var(--color-lilla-soft)] text-[var(--color-lilla)]",
         lime: "border border-[color-mix(in_oklab,var(--color-lime)_25%,transparent)] bg-[var(--color-lime-soft)] text-[var(--color-lime)]",
+        pink: "border border-[color-mix(in_oklab,var(--color-pink)_25%,transparent)] bg-[var(--color-pink-soft)] text-[var(--color-pink)]",
+        orange:
+          "border border-[color-mix(in_oklab,var(--color-orange)_25%,transparent)] bg-[var(--color-orange-soft)] text-[var(--color-orange)]",
       },
     },
     defaultVariants: { variant: "default" },

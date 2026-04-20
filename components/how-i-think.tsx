@@ -81,14 +81,14 @@ const chatSteps: Step[] = [
     avatar: <ClaudeAvatar />,
     body: (
       <div className="space-y-2">
-        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-violet)]">
+        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-lilla)]">
           Første bud på en plan
         </div>
-        <ul className="space-y-1.5 text-sm text-white/80">
+        <ul className="space-y-1.5 text-sm text-[var(--color-foreground)]/85">
           <li className="flex gap-2.5">
-            <span className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-[var(--color-violet)]" />
+            <span className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-[var(--color-lilla)]" />
             <span>
-              <strong className="font-semibold text-white">
+              <strong className="font-semibold text-[var(--color-foreground)]">
                 Overskud på ét blik
               </strong>{" "}
               — bruger indtaster sin løn og ser månedens overskud straks,
@@ -96,9 +96,9 @@ const chatSteps: Step[] = [
             </span>
           </li>
           <li className="flex gap-2.5">
-            <span className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-[var(--color-violet)]" />
+            <span className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-[var(--color-lilla)]" />
             <span>
-              <strong className="font-semibold text-white">
+              <strong className="font-semibold text-[var(--color-foreground)]">
                 Forslag frem for tomt regneark
               </strong>{" "}
               — hver kategori foreslår typiske udgifter brugeren kan tilføje
@@ -106,9 +106,9 @@ const chatSteps: Step[] = [
             </span>
           </li>
           <li className="flex gap-2.5">
-            <span className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-[var(--color-violet)]" />
+            <span className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-[var(--color-lilla)]" />
             <span>
-              <strong className="font-semibold text-white">
+              <strong className="font-semibold text-[var(--color-foreground)]">
                 Læringskort i bidder
               </strong>{" "}
               — korte moduler om skat, opsparing og automatisering, alene
@@ -135,12 +135,12 @@ const roleStyles: Record<
       "bg-[color-mix(in_oklab,var(--color-lime)_20%,transparent)] text-[var(--color-lime)]",
   },
   claude: {
-    dot: "bg-[var(--color-violet)]",
-    label: "text-[var(--color-violet)]",
+    dot: "bg-[var(--color-lilla)]",
+    label: "text-[var(--color-lilla)]",
     bubble:
-      "bg-[color-mix(in_oklab,var(--color-violet)_8%,var(--color-card))] border border-[color-mix(in_oklab,var(--color-violet)_25%,transparent)]",
+      "bg-[color-mix(in_oklab,var(--color-lilla)_8%,var(--color-card))] border border-[color-mix(in_oklab,var(--color-lilla)_25%,transparent)]",
     avatar:
-      "bg-[color-mix(in_oklab,var(--color-violet)_22%,transparent)] text-[var(--color-violet)]",
+      "bg-[color-mix(in_oklab,var(--color-lilla)_22%,transparent)] text-[var(--color-lilla)]",
   },
 };
 
@@ -175,7 +175,7 @@ export function HowIThink() {
         <>
           Jeg skal ikke bruge en færdig idé for at komme i gang. Bare en
           retning — en frustration, en tanke, en drøm. Så giver jeg AI&rsquo;en
-          al den <strong className="font-semibold text-white">kontekst</strong>{" "}
+          al den <strong className="font-semibold text-[var(--color-foreground)]">kontekst</strong>{" "}
           jeg har, og på få minutter har jeg det første udgangspunkt at
           arbejde ud fra.
         </>
@@ -194,17 +194,17 @@ export function HowIThink() {
           className="pointer-events-none absolute -inset-8 -z-10 rounded-[3rem]"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(255,184,58,0.18), transparent 70%)",
+              "radial-gradient(ellipse at center, rgba(232,252,135,0.45), transparent 70%)",
             filter: "blur(28px)",
           }}
         />
 
         <div className="flex items-start gap-4 md:gap-5">
           <div
-            className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[color-mix(in_oklab,var(--color-amber)_18%,transparent)] text-[var(--color-amber)]"
+            className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[var(--color-lime-soft)] text-[var(--color-lime)]"
             style={{
               boxShadow:
-                "0 0 28px rgba(255,184,58,0.35), inset 0 0 0 1px rgba(255,184,58,0.22)",
+                "0 0 28px rgba(232,252,135,0.6), inset 0 0 0 1px rgba(232,252,135,0.5)",
             }}
           >
             <div className="h-6 w-6">
@@ -212,17 +212,17 @@ export function HowIThink() {
             </div>
           </div>
           <div className="min-w-0 flex-1 pt-1">
-            <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-amber)]">
+            <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-lime)]">
               {idea.label}
             </div>
-            <p className="text-lg italic leading-snug text-white/90 md:text-xl">
+            <p className="text-lg italic leading-snug text-[var(--color-foreground)]/90 md:text-xl">
               {idea.body}
             </p>
           </div>
         </div>
       </motion.div>
 
-      {/* Thought trail — descending amber circles signal inner thought becoming conversation */}
+      {/* Thought trail — descending lime circles signal inner thought becoming conversation */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -231,9 +231,9 @@ export function HowIThink() {
         className="my-8 flex flex-col items-center gap-1.5"
         aria-hidden
       >
-        <span className="h-2 w-2 rounded-full bg-[color-mix(in_oklab,var(--color-amber)_55%,transparent)]" />
-        <span className="h-1.5 w-1.5 rounded-full bg-[color-mix(in_oklab,var(--color-amber)_35%,transparent)]" />
-        <span className="h-1 w-1 rounded-full bg-[color-mix(in_oklab,var(--color-amber)_20%,transparent)]" />
+        <span className="h-2 w-2 rounded-full bg-[color-mix(in_oklab,var(--color-lime)_55%,transparent)]" />
+        <span className="h-1.5 w-1.5 rounded-full bg-[color-mix(in_oklab,var(--color-lime)_35%,transparent)]" />
+        <span className="h-1 w-1 rounded-full bg-[color-mix(in_oklab,var(--color-lime)_20%,transparent)]" />
       </motion.div>
 
       {/* Chat — Mig ↔ Claude, a real exchange between two parties */}
@@ -285,8 +285,8 @@ export function HowIThink() {
                   transition={{ ...pair, delay: i * 0.22 + 0.15 }}
                   className={`mt-1 flex ${isEnd ? "justify-end pr-[22px]" : "justify-start pl-[22px]"}`}
                 >
-                  <div className="flex h-6 w-9 items-center justify-center rounded-full bg-[color-mix(in_oklab,var(--color-violet)_12%,transparent)]">
-                    <TypingDots color="var(--color-violet)" />
+                  <div className="flex h-6 w-9 items-center justify-center rounded-full bg-[color-mix(in_oklab,var(--color-lime)_12%,transparent)]">
+                    <TypingDots color="var(--color-lime)" />
                   </div>
                 </motion.div>
               ) : null}
@@ -312,7 +312,7 @@ export function HowIThink() {
               viewport={{ once: true }}
               transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
               style={{ transformOrigin: "left" }}
-              className="h-full bg-gradient-to-r from-[color-mix(in_oklab,var(--color-lime)_50%,transparent)] via-[var(--color-violet)] to-[color-mix(in_oklab,var(--color-foreground)_15%,transparent)]"
+              className="h-full bg-gradient-to-r from-[color-mix(in_oklab,var(--color-lime)_50%,transparent)] via-[var(--color-lilla)] to-[color-mix(in_oklab,var(--color-foreground)_15%,transparent)]"
             />
           </div>
 
@@ -374,18 +374,18 @@ export function HowIThink() {
                     repeat: Infinity,
                     ease: "easeOut",
                   }}
-                  className="absolute inset-0 rounded-full bg-[var(--color-violet)]"
+                  className="absolute inset-0 rounded-full bg-[var(--color-lilla)]"
                 />
                 <span
-                  className="relative flex h-6 w-6 items-center justify-center rounded-full bg-[var(--color-violet)]"
+                  className="relative flex h-6 w-6 items-center justify-center rounded-full bg-[var(--color-lilla)]"
                   style={{
-                    boxShadow: "0 0 20px rgba(138, 114, 255, 0.6)",
+                    boxShadow: "0 0 20px rgba(187, 180, 254, 0.7)",
                   }}
                 >
-                  <span className="h-2 w-2 rounded-full bg-white" />
+                  <span className="h-2 w-2 rounded-full bg-[var(--color-background)]" />
                 </span>
               </div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--color-violet)]">
+              <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--color-lilla)]">
                 Nu er vi her
               </div>
               <div className="mt-1 text-sm font-semibold text-[var(--color-foreground)]">

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { pair } from "@/lib/motion";
 
-export type NodeTone = "violet" | "lime" | "neutral";
+export type NodeTone = "lilla" | "lime" | "pink" | "orange";
 
 export type Node = {
   id: string;
@@ -19,7 +19,7 @@ export type Node = {
 export type Edge = {
   from: string;
   to: string;
-  tone: "violet" | "lime";
+  tone: "lilla" | "lime" | "pink" | "orange";
   delay: number;
   curve?: (a: Node, b: Node) => string;
 };
@@ -34,26 +34,33 @@ export const toneConfig: Record<
     glow: string;
   }
 > = {
-  violet: {
-    color: "var(--color-violet)",
-    raw: "#8a72ff",
-    bg: "var(--color-violet-soft)",
-    border: "color-mix(in oklab, var(--color-violet) 35%, transparent)",
-    glow: "0 0 22px rgba(138, 114, 255, 0.5)",
+  lilla: {
+    color: "var(--color-lilla)",
+    raw: "#8a7eef",
+    bg: "var(--color-lilla-soft)",
+    border: "color-mix(in oklab, var(--color-lilla) 60%, transparent)",
+    glow: "0 0 22px rgba(138, 126, 239, 0.55)",
   },
   lime: {
     color: "var(--color-lime)",
-    raw: "#5ad897",
+    raw: "#7fb81b",
     bg: "var(--color-lime-soft)",
-    border: "color-mix(in oklab, var(--color-lime) 35%, transparent)",
-    glow: "0 0 22px rgba(90, 216, 151, 0.45)",
+    border: "color-mix(in oklab, var(--color-lime) 60%, transparent)",
+    glow: "0 0 22px rgba(127, 184, 27, 0.45)",
   },
-  neutral: {
-    color: "var(--color-foreground)",
-    raw: "#eef0f6",
-    bg: "color-mix(in oklab, var(--color-foreground) 6%, transparent)",
-    border: "color-mix(in oklab, var(--color-foreground) 18%, transparent)",
-    glow: "0 0 20px rgba(238, 240, 246, 0.25)",
+  pink: {
+    color: "var(--color-pink)",
+    raw: "#d66ce8",
+    bg: "var(--color-pink-soft)",
+    border: "color-mix(in oklab, var(--color-pink) 60%, transparent)",
+    glow: "0 0 22px rgba(214, 108, 232, 0.55)",
+  },
+  orange: {
+    color: "var(--color-orange)",
+    raw: "#e88535",
+    bg: "var(--color-orange-soft)",
+    border: "color-mix(in oklab, var(--color-orange) 60%, transparent)",
+    glow: "0 0 22px rgba(232, 133, 53, 0.55)",
   },
 };
 
@@ -111,7 +118,7 @@ export function NodeGraph({
         >
           <defs>
             <marker
-              id={`${idPrefix}-arrow-violet`}
+              id={`${idPrefix}-arrow-lilla`}
               viewBox="0 0 10 10"
               refX="8"
               refY="5"
@@ -119,7 +126,7 @@ export function NodeGraph({
               markerHeight="4"
               orient="auto-start-reverse"
             >
-              <path d="M 0 0 L 10 5 L 0 10 z" fill={toneConfig.violet.raw} />
+              <path d="M 0 0 L 10 5 L 0 10 z" fill={toneConfig.lilla.raw} />
             </marker>
             <marker
               id={`${idPrefix}-arrow-lime`}
@@ -131,6 +138,28 @@ export function NodeGraph({
               orient="auto-start-reverse"
             >
               <path d="M 0 0 L 10 5 L 0 10 z" fill={toneConfig.lime.raw} />
+            </marker>
+            <marker
+              id={`${idPrefix}-arrow-pink`}
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="4"
+              markerHeight="4"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" fill={toneConfig.pink.raw} />
+            </marker>
+            <marker
+              id={`${idPrefix}-arrow-orange`}
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="4"
+              markerHeight="4"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" fill={toneConfig.orange.raw} />
             </marker>
           </defs>
 
@@ -207,9 +236,9 @@ export function NodeGraph({
                   : cfg.bg,
                 borderColor: isActive ? cfg.color : cfg.border,
                 boxShadow: isActive ? cfg.glow : "none",
-                color: isActive ? cfg.color : "var(--color-foreground)",
+                color: "var(--color-foreground)",
               }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 cursor-help rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet)] md:px-4 md:py-2 md:text-sm"
+              className="absolute -translate-x-1/2 -translate-y-1/2 cursor-help rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-sm transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:px-4 md:py-2 md:text-sm"
             >
               <span className="inline-flex items-center">
                 {n.multi ? <MultiDots color={cfg.color} /> : null}

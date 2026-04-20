@@ -28,9 +28,9 @@ const dreamMatch: MatchItem[] = [
 ];
 
 const strengthColor: Record<Strength, string> = {
-  strong: "#5ad897",
-  ok: "#ffb83a",
-  miss: "#ff6279",
+  strong: "#7fb81b",
+  ok: "#e88535",
+  miss: "#d66ce8",
 };
 
 function StrengthIcon({ strength }: { strength: Strength }) {
@@ -67,7 +67,7 @@ function ScoreRing({
             cx="24"
             cy="24"
             r="20"
-            stroke="rgba(255,255,255,0.08)"
+            stroke="rgba(20,20,20,0.1)"
             strokeWidth="3"
             fill="none"
           />
@@ -96,7 +96,7 @@ function ScoreRing({
           </span>
         </div>
       </div>
-      <span className="text-[8px] font-semibold uppercase tracking-[0.14em] text-white/60">
+      <span className="text-[8px] font-semibold uppercase tracking-[0.14em] text-[var(--color-foreground)]/60">
         {label}
       </span>
     </div>
@@ -106,16 +106,16 @@ function ScoreRing({
 function MatchColumn({ title, items }: { title: string; items: MatchItem[] }) {
   return (
     <div className="min-w-0 flex-1">
-      <div className="mb-1.5 border-b border-white/10 pb-1 text-[10px] font-semibold tracking-tight text-white">
+      <div className="mb-1.5 border-b border-[var(--color-border)] pb-1 text-[10px] font-semibold tracking-tight text-[var(--color-foreground)]">
         {title}
       </div>
       <div className="space-y-0">
         {items.map((item, i) => (
           <div
             key={`${item.label}-${i}`}
-            className="flex items-center justify-between gap-2 border-b border-white/5 py-1 last:border-b-0"
+            className="flex items-center justify-between gap-2 border-b border-[rgba(20,20,20,0.06)] py-1 last:border-b-0"
           >
-            <span className="text-[9px] font-semibold uppercase tracking-[0.1em] text-white/55">
+            <span className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--color-foreground)]/55">
               {item.label}
             </span>
             <span
@@ -148,25 +148,25 @@ export function JobsoegningPreview() {
         className="relative p-4"
         style={{
           backgroundImage:
-            "radial-gradient(500px 300px at 10% -10%, rgba(138, 114, 255, 0.18), transparent 55%), radial-gradient(400px 260px at 100% 0%, rgba(90, 216, 151, 0.1), transparent 55%)",
+            "radial-gradient(500px 300px at 10% -10%, rgba(237, 180, 248, 0.12), transparent 60%), radial-gradient(400px 260px at 100% 0%, rgba(232, 252, 135, 0.1), transparent 60%)",
         }}
       >
-        <div className="rounded-lg border border-white/10 bg-[rgba(20,22,38,0.7)] p-3">
+        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-card)] p-3">
           {/* Meta row */}
-          <div className="mb-2 flex items-center justify-between text-[9px] text-white/50">
+          <div className="mb-2 flex items-center justify-between text-[9px] text-[var(--color-foreground)]/55">
             <span className="inline-flex items-center gap-1">
               <MapPin className="h-2.5 w-2.5" />
               Aarhus · Jobindex
             </span>
             <span>
-              Frist <span className="text-white/80">05/05</span>
+              Frist <span className="text-[var(--color-foreground)]/85">05/05</span>
             </span>
           </div>
 
           {/* Title */}
           <div className="mb-3">
             <h4
-              className="text-base font-bold leading-tight text-white md:text-lg"
+              className="text-base font-bold leading-tight text-[var(--color-foreground)] md:text-lg"
               style={{ letterSpacing: "-0.02em" }}
             >
               AI Frontend-udvikler
@@ -175,9 +175,9 @@ export function JobsoegningPreview() {
 
           {/* Rings + matches */}
           <div className="grid grid-cols-[auto_1fr_1fr] gap-3">
-            <div className="flex flex-col items-center gap-2 border-r border-white/10 pr-3">
-              <ScoreRing value={100} label="Profil" color="#5ad897" />
-              <ScoreRing value={75} label="Arbejdsplads" color="#8a72ff" />
+            <div className="flex flex-col items-center gap-2 border-r border-[var(--color-border)] pr-3">
+              <ScoreRing value={100} label="Profil" color="#edb4f8" />
+              <ScoreRing value={75} label="Arbejdsplads" color="#feb985" />
             </div>
             <MatchColumn title="Profil" items={profileMatch} />
             <MatchColumn title="Arbejdsplads" items={dreamMatch} />
@@ -187,19 +187,19 @@ export function JobsoegningPreview() {
           <div className="mt-3 flex items-center gap-2">
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 rounded-md border border-[rgba(90,216,151,0.3)] bg-[rgba(90,216,151,0.08)] px-2.5 py-1 text-[10px] font-medium text-[#5ad897]"
+              className="inline-flex items-center gap-1.5 rounded-md border border-[rgba(237,180,248,0.5)] bg-[rgba(237,180,248,0.25)] px-2.5 py-1 text-[10px] font-medium text-[var(--color-foreground)]"
             >
               <Heart className="h-2.5 w-2.5" />
               Gem
             </button>
             <button
               type="button"
-              className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] text-white/60"
+              className="rounded-md border border-[var(--color-border)] bg-[rgba(20,20,20,0.04)] px-2.5 py-1 text-[10px] text-[var(--color-foreground)]/65"
             >
               Skjul
             </button>
             <div className="flex-1" />
-            <span className="text-[9px] text-white/50">
+            <span className="text-[9px] text-[var(--color-foreground)]/55">
               Foreslået ansøgning →
             </span>
           </div>

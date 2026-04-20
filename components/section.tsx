@@ -29,7 +29,7 @@ export function Section({
       {...props}
     >
       {eyebrow ? (
-        <div className="mb-3 text-xs font-medium text-[var(--color-violet)]">
+        <div className="mb-3 text-xs font-medium text-[var(--color-lilla)]">
           {eyebrow}
         </div>
       ) : null}

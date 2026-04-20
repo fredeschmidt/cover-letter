@@ -10,7 +10,7 @@ const nodes: readonly Node[] = [
     desc: "Når jeg opdager arbejde der skal gøres flere gange, er det signal til at bygge en skill.",
     x: 8,
     y: 50,
-    tone: "neutral",
+    tone: "orange",
   },
   {
     id: "first-solve",
@@ -18,7 +18,7 @@ const nodes: readonly Node[] = [
     desc: "Jeg beder først AI'en løse opgaven uden skill — for at finde den rette måde at gøre det på.",
     x: 30,
     y: 50,
-    tone: "violet",
+    tone: "orange",
   },
   {
     id: "create",
@@ -43,19 +43,19 @@ const nodes: readonly Node[] = [
     desc: "Hvis output ikke rammer plet, fodrer jeg AI'en med mere kontekst og opdaterer skillen — så den er skarpere næste gang.",
     x: 78,
     y: 80,
-    tone: "violet",
+    tone: "pink",
   },
 ];
 
 const edges: readonly Edge[] = [
-  { from: "trigger", to: "first-solve", tone: "violet", delay: 0 },
-  { from: "first-solve", to: "create", tone: "lime", delay: 0.4 },
+  { from: "trigger", to: "first-solve", tone: "orange", delay: 0 },
+  { from: "first-solve", to: "create", tone: "orange", delay: 0.4 },
   { from: "create", to: "use", tone: "lime", delay: 0.8 },
-  { from: "use", to: "refine", tone: "violet", delay: 1.2 },
+  { from: "use", to: "refine", tone: "pink", delay: 1.2 },
   {
     from: "refine",
     to: "use",
-    tone: "lime",
+    tone: "pink",
     delay: 1.6,
     curve: (a, b) =>
       `M ${a.x} ${a.y / 2} C ${a.x + 14} ${a.y / 2 - 4}, ${b.x + 14} ${b.y / 2 + 4}, ${b.x} ${b.y / 2}`,

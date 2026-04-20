@@ -18,7 +18,7 @@ export function Hero() {
           transition={{ ...pair, delay: 0.05 }}
           className="mb-5 inline-block"
         >
-          <div className="relative h-28 w-28 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-card)] shadow-[0_0_40px_-10px_var(--color-violet)]">
+          <div className="relative h-28 w-28 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-card)] shadow-[0_0_40px_-10px_var(--color-lilla)]">
             <Image
               src="/frederikke.jpg"
               alt="Frederikke Schmidt"
@@ -44,7 +44,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...pair, delay: 0.35 }}
-          className="brand-gradient-text mb-6 text-lg font-semibold md:text-xl"
+          className="mb-6 text-lg font-semibold text-[var(--color-lilla)] md:text-xl"
         >
           {profile.role}
         </motion.p>

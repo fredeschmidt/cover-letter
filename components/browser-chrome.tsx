@@ -8,13 +8,13 @@ export function BrowserChrome({
   showArrow?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2 border-b border-white/5 bg-[rgba(0,0,0,0.25)] px-3 py-2">
+    <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[rgba(20,20,20,0.05)] px-3 py-2">
       <div className="flex gap-1.5">
         <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
       </div>
-      <div className="ml-2 flex flex-1 items-center gap-2 rounded-md bg-white/5 px-3 py-1 text-[11px] text-[var(--color-muted-foreground)]">
+      <div className="ml-2 flex flex-1 items-center gap-2 rounded-md bg-[rgba(20,20,20,0.05)] px-3 py-1 text-[11px] text-[var(--color-muted-foreground)]">
         <span className="text-[var(--color-lime)]">●</span>
         {url}
       </div>

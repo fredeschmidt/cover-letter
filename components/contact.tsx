@@ -48,7 +48,7 @@ export function Contact() {
       >
         <div
           aria-hidden
-          className="pointer-events-none absolute -left-8 top-1/2 h-40 w-72 -translate-y-1/2 rounded-full bg-[var(--color-violet)] opacity-15 blur-3xl transition-opacity duration-500 group-hover:opacity-30"
+          className="pointer-events-none absolute -left-8 top-1/2 h-40 w-72 -translate-y-1/2 rounded-full bg-[var(--color-lilla)] opacity-15 blur-3xl transition-opacity duration-500 group-hover:opacity-30"
         />
 
         <div className="relative flex items-start gap-4 md:gap-5">
@@ -56,24 +56,24 @@ export function Contact() {
             className="mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-full md:h-12 md:w-12"
             style={{
               background:
-                "color-mix(in oklab, var(--color-violet) 20%, transparent)",
-              color: "var(--color-violet)",
-              boxShadow: "0 0 24px rgba(138, 114, 255, 0.35)",
+                "color-mix(in oklab, var(--color-lilla) 20%, transparent)",
+              color: "var(--color-lilla)",
+              boxShadow: "0 0 24px rgba(187, 180, 254, 0.5)",
             }}
           >
             <Phone className="h-4 w-4 md:h-5 md:w-5" />
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-violet)]">
+            <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[var(--color-lilla)]">
               Ring
             </div>
             <div
-              className="display text-3xl leading-tight transition-colors group-hover:text-[var(--color-violet)] md:text-5xl"
+              className="display text-3xl leading-tight transition-colors group-hover:text-[var(--color-lilla)] md:text-5xl"
               style={{ letterSpacing: "-0.015em" }}
             >
               {profile.phone}
-              <ArrowUpRight className="ml-2 inline-block h-5 w-5 -translate-y-1 text-[var(--color-muted-foreground)] transition-all group-hover:-translate-y-2 group-hover:translate-x-1 group-hover:text-[var(--color-violet)] md:h-7 md:w-7" />
+              <ArrowUpRight className="ml-2 inline-block h-5 w-5 -translate-y-1 text-[var(--color-muted-foreground)] transition-all group-hover:-translate-y-2 group-hover:translate-x-1 group-hover:text-[var(--color-lilla)] md:h-7 md:w-7" />
             </div>
             <div className="mt-3 text-sm text-[var(--color-muted-foreground)]">
               Jeg svarer oftest med det samme.
@@ -85,7 +85,7 @@ export function Contact() {
       <ul className="mt-10 space-y-1 md:mt-12">
         {rows.map((row, i) => {
           const content = (
-            <div className="flex items-center gap-4 rounded-xl px-3 py-3 transition-colors hover:bg-white/[0.03] md:px-4 md:py-4">
+            <div className="flex items-center gap-4 rounded-xl px-3 py-3 transition-colors hover:bg-[rgba(20,20,20,0.04)] md:px-4 md:py-4">
               <div
                 className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-[var(--color-muted-foreground)]"
                 style={{

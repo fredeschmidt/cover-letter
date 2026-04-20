@@ -4,17 +4,15 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { pair } from "@/lib/motion";
 
-type Region = { name: string; color: string; chipShadow: string };
-
-const regions: readonly Region[] = [
-  { name: "Østjylland", color: "#0a4ea3", chipShadow: "0 0 8px #0a4ea380" },
-  { name: "Bornholm", color: "#2a8b3a", chipShadow: "0 0 8px #2a8b3a80" },
-  { name: "Fyn", color: "#1aa3d4", chipShadow: "0 0 8px #1aa3d480" },
-  { name: "Midtvest", color: "#e85a23", chipShadow: "0 0 8px #e85a2380" },
-  { name: "Nord", color: "#1a4a8a", chipShadow: "0 0 8px #1a4a8a80" },
-  { name: "Syd", color: "#d63a3a", chipShadow: "0 0 8px #d63a3a80" },
-  { name: "Øst", color: "#b8324a", chipShadow: "0 0 8px #b8324a80" },
-  { name: "Lorry", color: "#0e2a5e", chipShadow: "0 0 8px #0e2a5e80" },
+const regions: readonly string[] = [
+  "Østjylland",
+  "Bornholm",
+  "Fyn",
+  "Midtvest",
+  "Nord",
+  "Syd",
+  "Øst",
+  "Lorry",
 ];
 
 type ButtonVariant = "primary" | "secondary";
@@ -25,19 +23,19 @@ const buttonStyles: Record<
   Record<ButtonState, { background: string; color: string; borderColor: string }>
 > = {
   primary: {
-    default: { background: "#1942c4", color: "#ffffff", borderColor: "transparent" },
-    hover: { background: "#0a1a52", color: "#ffffff", borderColor: "transparent" },
+    default: { background: "#bbb4fe", color: "#141414", borderColor: "transparent" },
+    hover: { background: "#9d94f0", color: "#141414", borderColor: "transparent" },
   },
   secondary: {
     default: {
       background: "transparent",
-      color: "#ffffff",
-      borderColor: "rgba(255,255,255,0.35)",
+      color: "#141414",
+      borderColor: "rgba(20,20,20,0.35)",
     },
     hover: {
-      background: "rgba(255,255,255,0.08)",
-      color: "#ffffff",
-      borderColor: "rgba(255,255,255,0.45)",
+      background: "rgba(20,20,20,0.08)",
+      color: "#141414",
+      borderColor: "rgba(20,20,20,0.55)",
     },
   },
 };
@@ -63,7 +61,7 @@ function MockButton({
 
 const canvasBgStyle = {
   backgroundImage:
-    "radial-gradient(500px 300px at 10% -10%, rgba(122, 77, 255, 0.18), transparent 55%), radial-gradient(400px 260px at 100% 0%, rgba(90, 216, 151, 0.10), transparent 55%)",
+    "radial-gradient(500px 300px at 10% -10%, rgba(237, 180, 248, 0.12), transparent 60%), radial-gradient(400px 260px at 100% 0%, rgba(254, 185, 133, 0.1), transparent 60%)",
 } as const;
 
 export function TV2RegPreview() {
@@ -73,17 +71,17 @@ export function TV2RegPreview() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={pair}
-      className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-gradient-to-br from-[#0a0f2e] via-[#0b0e22] to-[#0f1220]"
+      className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-card)]"
     >
-      <div className="flex items-center gap-2 border-b border-white/5 bg-[rgba(0,0,0,0.25)] px-3 py-2">
+      <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[rgba(20,20,20,0.03)] px-3 py-2">
         <FigmaMark />
         <div className="ml-1 flex flex-1 items-center gap-2 text-[11px] text-[var(--color-muted-foreground)]">
-          <span className="text-white/85">TV2 Regionernes designsystem</span>
+          <span className="text-[var(--color-foreground)]/85">TV2 Regionernes designsystem</span>
           <span className="opacity-50">/</span>
           <span>Buttons</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[var(--color-lime)]" />
+          <span className="h-2 w-2 rounded-full bg-[var(--color-lime-dim)]" />
           <span className="text-[10px] text-[var(--color-muted-foreground)]">
             8 regioner
           </span>
@@ -92,51 +90,47 @@ export function TV2RegPreview() {
 
       <div className="relative p-4" style={canvasBgStyle}>
         <div className="relative">
-          <div className="mb-1.5 text-[9px] font-medium uppercase tracking-[0.14em] text-[var(--color-violet)]">
+          <div className="mb-1.5 text-[9px] font-medium uppercase tracking-[0.14em] text-[var(--color-lilla-dim)]">
             Frame · Button
           </div>
 
-          <div className="rounded-md border border-white/10 bg-white/[0.04] p-3">
-            <div className="mb-2 grid grid-cols-[60px_1fr_1fr] items-end gap-2 text-[9px] text-white/55">
+          <div className="rounded-md border border-[var(--color-border)] bg-[rgba(255,255,255,0.6)] p-3">
+            <div className="mb-2 grid grid-cols-[60px_1fr_1fr] items-end gap-2 text-[9px] text-[var(--color-foreground)]/55">
               <span />
-              <span className="font-semibold text-white/90">Primary</span>
-              <span className="font-semibold text-white/90">Secondary</span>
+              <span className="font-semibold text-[var(--color-foreground)]/90">Primary</span>
+              <span className="font-semibold text-[var(--color-foreground)]/90">Secondary</span>
             </div>
 
             <div className="mb-1.5 grid grid-cols-[60px_1fr_1fr] items-center gap-2">
-              <span className="text-[9px] text-white/55">Default</span>
+              <span className="text-[9px] text-[var(--color-foreground)]/55">Default</span>
               <MockButton variant="primary" state="default" />
               <MockButton variant="secondary" state="default" />
             </div>
 
             <div className="grid grid-cols-[60px_1fr_1fr] items-center gap-2">
-              <span className="text-[9px] text-white/55">Hover</span>
+              <span className="text-[9px] text-[var(--color-foreground)]/55">Hover</span>
               <MockButton variant="primary" state="hover" />
               <MockButton variant="secondary" state="hover" />
             </div>
           </div>
 
-          <div className="mt-3 rounded-md border border-white/10 bg-white/[0.04] p-3">
+          <div className="mt-3 rounded-md border border-[var(--color-border)] bg-[rgba(255,255,255,0.6)] p-3">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-[9px] font-medium uppercase tracking-[0.14em] text-[var(--color-violet)]">
+              <span className="text-[9px] font-medium uppercase tracking-[0.14em] text-[var(--color-lilla-dim)]">
                 Tokens · Tema
               </span>
-              <span className="text-[9px] font-mono text-white/55">
+              <span className="text-[9px] font-mono text-[var(--color-foreground)]/55">
                 primary-color
               </span>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {regions.map((r) => (
+              {regions.map((name) => (
                 <div
-                  key={r.name}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1"
+                  key={name}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.6)] px-2 py-1"
                 >
-                  <span
-                    className="h-2.5 w-2.5 rounded-full"
-                    style={{ background: r.color, boxShadow: r.chipShadow }}
-                  />
-                  <span className="text-[9px] font-medium text-white/85">
-                    {r.name}
+                  <span className="text-[9px] font-medium text-[var(--color-foreground)]/85">
+                    {name}
                   </span>
                 </div>
               ))}

@@ -32,10 +32,10 @@ export default function RootLayout({
     <html lang="da" className={`${geistSans.variable} ${geistMono.variable} scroll-smooth`}>
       <body className="min-h-screen">
         <div className="aurora" aria-hidden>
-          <div className="aurora__orb aurora__orb--violet-1" />
+          <div className="aurora__orb aurora__orb--lilla-1" />
           <div className="aurora__orb aurora__orb--lime" />
-          <div className="aurora__orb aurora__orb--violet-2" />
-          <div className="aurora__orb aurora__orb--amber" />
+          <div className="aurora__orb aurora__orb--pink" />
+          <div className="aurora__orb aurora__orb--orange" />
         </div>
         {children}
       </body>

@@ -4,17 +4,17 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet)] disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] disabled:pointer-events-none disabled:opacity-50 active:scale-[0.97]",
   {
     variants: {
       variant: {
         default:
-          "bg-[var(--color-foreground)] text-[var(--color-background)] hover:bg-[var(--color-foreground)]/90",
+          "bg-[var(--color-foreground)] text-[var(--color-background)] hover:bg-[var(--color-foreground)]/80",
         outline:
           "border border-[var(--color-border)] bg-transparent text-[var(--color-foreground)] hover:bg-[var(--color-card)]",
         ghost: "text-[var(--color-foreground)] hover:bg-[var(--color-card)]",
-        violet:
-          "bg-[var(--color-violet)] text-[var(--color-background)] hover:bg-[var(--color-violet-dim)]",
+        lilla:
+          "bg-[var(--color-lilla)] text-[var(--color-background)] hover:bg-[var(--color-lilla-dim)]",
       },
       size: {
         default: "h-10 px-5 py-2",

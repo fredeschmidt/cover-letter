@@ -14,10 +14,10 @@ const domainLabel: Record<string, string> = {
 };
 
 const domainColor: Record<string, string> = {
-  frontend: "#8a72ff",
-  ai: "#5ad897",
-  leadership: "#ffb83a",
-  product: "#ff6279",
+  frontend: "#8a7eef",
+  ai: "#7fb81b",
+  leadership: "#e88535",
+  product: "#d66ce8",
 };
 
 function isCurrent(r: RoleNode) {
@@ -39,20 +39,19 @@ function RoleItem({ role, index }: { role: RoleNode; index: number }) {
     >
       {/* Timeline dot */}
       <span
-        className="absolute left-[10px] top-[10px] z-10 h-3 w-3 -translate-x-1/2 rounded-full border-2"
+        className="absolute left-[10px] top-[10px] z-10 h-3 w-3 -translate-x-1/2 rounded-full"
         style={{
-          background: current ? color : "var(--color-background)",
-          borderColor: color,
+          background: color,
           boxShadow: current ? `0 0 12px ${color}` : "none",
         }}
       />
 
       <div
-        className="rounded-lg bg-[var(--color-card)] p-3 transition-colors hover:bg-[var(--color-muted)]"
+        className="rounded-lg border bg-[var(--color-card)] p-3"
         style={{
-          borderLeft: `2px solid ${
-            current ? color : `color-mix(in oklab, ${color} 35%, transparent)`
-          }`,
+          borderColor: `color-mix(in oklab, ${color} 35%, transparent)`,
+          borderLeftWidth: "2px",
+          borderLeftColor: current ? color : `color-mix(in oklab, ${color} 45%, transparent)`,
         }}
       >
         <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
@@ -79,9 +78,9 @@ function RoleItem({ role, index }: { role: RoleNode; index: number }) {
                 key={d}
                 className="inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[9px] font-medium"
                 style={{
-                  borderColor: `color-mix(in oklab, ${domainColor[d]} 25%, transparent)`,
-                  background: `color-mix(in oklab, ${domainColor[d]} 10%, transparent)`,
-                  color: domainColor[d],
+                  borderColor: `color-mix(in oklab, ${domainColor[d]} 55%, transparent)`,
+                  background: `color-mix(in oklab, ${domainColor[d]} 35%, transparent)`,
+                  color: "var(--color-foreground)",
                 }}
               >
                 <DomainIcon domain={d} className="h-2.5 w-2.5" />
@@ -124,7 +123,7 @@ export function CvConstellation() {
           <span className="dot-pulse inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-lime)]" />
           Nu
         </div>
-        <ol className="relative space-y-2 before:absolute before:left-[10px] before:top-2 before:bottom-2 before:w-px before:bg-gradient-to-b before:from-[var(--color-lime)]/40 before:to-[var(--color-violet)]/20">
+        <ol className="relative space-y-2 before:absolute before:left-[10px] before:top-2 before:bottom-2 before:w-px before:bg-gradient-to-b before:from-[var(--color-lime)]/40 before:to-[var(--color-lilla)]/20">
           {nowRoles.map((r, i) => (
             <RoleItem key={r.id} role={r} index={i} />
           ))}
@@ -161,17 +160,18 @@ export function CvConstellation() {
                 className="relative pl-10"
               >
                 <span
-                  className="absolute left-[10px] top-[10px] z-10 h-3 w-3 -translate-x-1/2 rounded-full border-2"
+                  className="absolute left-[10px] top-[10px] z-10 h-3 w-3 -translate-x-1/2 rounded-full"
                   style={{
-                    background: "var(--color-background)",
-                    borderColor: color,
+                    background: color,
                   }}
                 />
 
                 <div
-                  className="rounded-lg bg-[var(--color-card)] p-3 transition-colors hover:bg-[var(--color-muted)]"
+                  className="rounded-lg border bg-[var(--color-card)] p-3"
                   style={{
-                    borderLeft: `2px solid color-mix(in oklab, ${color} 35%, transparent)`,
+                    borderColor: `color-mix(in oklab, ${color} 35%, transparent)`,
+                    borderLeftWidth: "2px",
+                    borderLeftColor: `color-mix(in oklab, ${color} 45%, transparent)`,
                   }}
                 >
                   <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
