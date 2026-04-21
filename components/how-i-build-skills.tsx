@@ -23,7 +23,7 @@ const nodes: readonly Node[] = [
   {
     id: "create",
     label: "Skab skill",
-    desc: "Når jeg er tilfreds, beder jeg AI'en kodificere løsningen som en skill der kan genbruges.",
+    desc: "Når jeg er tilfreds, beder jeg AI'en pakke løsningen som en skill der kan genbruges.",
     x: 58,
     y: 50,
     tone: "lime",
@@ -71,9 +71,9 @@ export function HowIBuildSkills() {
       variant="chapter"
       chapterNumber={3}
       isLastChapter
-      eyebrow="Sådan bygger jeg skills"
+      eyebrow="Sådan træner jeg AI"
       title="Jeg bruger ikke bare skills — jeg bygger og forfiner mine egne."
-      intro="Når noget skal gentages, beder jeg først AI'en løse opgaven. Når jeg er tilfreds, kodificerer vi løsningen som en skill. Næste gang den ikke rammer plet, fodrer jeg den med mere kontekst — så den bliver skarpere for hver iteration."
+      intro="Når noget arbejde skal gentages, beder jeg først AI'en løse én af opgaverne. Når jeg er tilfreds, pakker jeg løsningen som en skill. Næste gang jeg skal løse en lignende opgave, og jeg bruger denne skill og den ikke rammer plet, fodrer jeg den med mere kontekst — så den bliver skarpere for hver gang."
     >
       <NodeGraph
         nodes={nodes}

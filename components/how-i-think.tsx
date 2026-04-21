@@ -19,7 +19,7 @@ type Stage = {
 const stages: readonly Stage[] = [
   { id: "idea", label: "Idé", sub: "en tanke, en drøm", tone: "lime", icon: "spark" },
   { id: "context", label: "Kontekst", sub: "alt jeg ved", tone: "lime", icon: "doc" },
-  { id: "ai", label: "AI", sub: "tygger det", tone: "lilla", icon: "star" },
+  { id: "ai", label: "AI", sub: "former det", tone: "lilla", icon: "star" },
   {
     id: "start",
     label: "Udgangs\u00ADpunkt",

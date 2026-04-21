@@ -27,13 +27,15 @@ export const projects: Project[] = [
     tagline: "Personligt overblik samt rådgivning af dit budget.",
     year: "2026",
     status: "aktiv",
-    stack: ["Next.js", "Tailwind", "shadcn/ui", "Vercel"],
+    stack: ["Next.js", "Tailwind", "shadcn/ui", "Vercel", "localStorage"],
     problem:
       "Jeg vil give andre den ro omkring økonomi, jeg selv får af et detaljeret budget — gennem et overskueligt overblik og konkrete anbefalinger.",
     process: [
-      "Skitserede brugerflowet ud fra mit eget budget-rituale og gav det videre til AI'en som kontekst.",
-      "AI'en foreslår et budget-udkast brugeren kan tilpasse.",
-      "Agent-testpanel (PM + UX + product designer) forbedrer produktet løbende.",
+      "Skitserede brugerflowet ud fra mit eget budget-rituale og gav det videre til AI'en som kontekst via CLAUDE.md og custom skills (architecture, simple-budget-ui).",
+      "AI'en byggede et budget-udkast i Next.js + shadcn/ui, som jeg løbende tilpassede via inline redigering.",
+      "Budget gemmes pt. i browserens localStorage.",
+      "Login oprettet via magic link (NextAuth + Resend) med Drizzle-adapter, så data på sigt kan følge brugeren på tværs af enheder.",
+      "Agent-testpanel med personaer (par, single, familie) + eksperter (produktleder, UX, product designer, tekstforfatter, tilgængelighed) forbedrer produktet løbende.",
     ],
   },
   {
@@ -46,25 +48,27 @@ export const projects: Project[] = [
     problem:
       "Jobsøgning kræver overblik, research og personlige ansøgninger. Jeg ville have ét sted der samler jobopslag, vurderer match og skriver skræddersyede ansøgninger i min stemme.",
     process: [
-      "Modellerede mig selv som konteksten AI'en bygger på: profil, drømmearbejdsplads, skrivestil og tidligere ansøgninger.",
+      "Modellerede mig selv som den kontekst AI'en bygger på: profil, drømmearbejdsplads, skrivestil og tidligere ansøgninger.",
+      "Byggede en daglig jobscanner der henter opslag fra det danske marked med ekstra vægt på små og oversete startups.",
       "Match-score viser med ét blik hvor godt et jobopslag passer til min profil og drømmearbejdsplads.",
-      "Byggede like/skjul-system til at holde overblik.",
-      "Integrerede AI til ansøgningsgenerering baseret på profil + skrivestil.",
+      "Like/skjul-system til at sortere støjen fra og holde fokus på de relevante opslag.",
+      "Integrerede AI til ansøgningsgenerering baseret på min profil, skrivestil og konkrete eksempler på ansøgninger der har virket.",
+      "Valgte en simpel stack (Next.js, localStorage, ingen backend) da dette blot var til eget brug.",
     ],
   },
   {
     slug: "tv2reg-designsystem",
-    title: "TV2 Regionernes designsystem",
-    tagline: "Designsystem til TV2 Regionerne med Figma + MCP.",
+    title: "Figma-integration og design tokens på tværs af regioner",
+    tagline: "Jeg har bygget et setup, hvor repo-baserede komponenter blev omsat til Figma-atom-komponenter, så de kunne styres af design tokens.",
     year: "2026",
     status: "i drift",
     stack: ["Figma", "MCP", "TypeScript", "Designsystem"],
     problem:
-      "TV2 Regionerne manglede et samlet designsystem der kunne tilgås både af designere og udviklere — og nu også af agents.",
+      "Hver region havde sit eget frontend-udtryk, hvilket gjorde løsningen tung at vedligeholde. Derfor opstod behovet for et fælles designsystem med udgangspunkt i Figma, hvor hver regions visuelle identitet kunne styres gennem tokens, så vedligeholdelse på tværs af regioner og design blev enklere.",
     process: [
-      "Opsatte MCP-integration mod Figma.",
-      "Overførte sitets komponenter til Figma — organiseret i komponentsamlinger der skifter tema via tokens.",
-      "Bruges internt hos TV2 Regionerne for at holde sitene konsistente.",
+      "Hentede atom-komponenter fra de eksisterende repo-baserede komponenter ind i Figma.",
+      "Omsatte dem til genbrugelige Figma-komponenter, der kunne styres via design tokens.",
+      "Skabte et grundlag, hvor ændringer i design og kode lettere kan holdes synkroniseret fremadrettet.",
     ],
   },
 ];
@@ -82,11 +86,11 @@ export const roles: RoleNode[] = [
   {
     id: "ai-practice",
     title: "AI-praktiker",
-    company: "Claude Code, MCP, agents",
+    company: "Claude Code, Codex, agents, skills, MCP",
     period: "Nu",
     domains: ["ai"],
     highlight:
-      "Bygger og forfiner custom Claude Code skills, MCP-integrationer (Figma, Linear) og agent-teams der tester og forbedrer mine egne produkter.",
+      "Bygger og forfiner custom skills, MCP-integrationer (Figma, Linear) og agent-teams der tester og forbedrer mine egne produkter.",
   },
   {
     id: "monimo-product",
@@ -95,7 +99,7 @@ export const roles: RoleNode[] = [
     period: "2026",
     domains: ["ai", "product", "frontend"],
     highlight:
-      "AI-drevet budget-app der skaber ro gennem overskueligt overblik og konkrete anbefalinger — bygget selvstændigt og testet løbende af et eget agent-team.",
+      "Webbaseret budget-værktøj til par i etableringsfasen, der skaber ro om økonomien gennem overskueligt overblik og konkrete anbefalinger. Bygget selvstændigt fra idé til færdigt produkt i et gennemgående samarbejde med AI: research, målgruppe, UX, visuelt design og kode er alt sammen blevet til i dialog med AI, mens jeg har stået for retning, beslutninger og kvalitetssikring.\n\nHar derudover opbygget et dedikeret team af specialiserede AI-agenter (produktleder, UX'er, designer, copywriter og målgruppe-personaer), der løbende tester og udfordrer produktet.",
   },
   {
     id: "tv2oj-pm",

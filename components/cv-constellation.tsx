@@ -116,7 +116,7 @@ export function CvConstellation() {
         CV
       </h2>
       <p className="mb-10 max-w-2xl leading-relaxed text-[var(--color-muted-foreground)]">
-        Snart 10 år som frontend-udvikler. Undervejs blevet teknisk projektleder for et frontend-team, og sidste år dykket dybt ned i AI og agent-workflows.
+        Snart 10 år som frontend-udvikler. Undervejs blevet teknisk projektleder for et frontend-team, og senest dykket dybt ned i AI og agent-workflows.
       </p>
       {/* Now section */}
       <div className="mb-10">

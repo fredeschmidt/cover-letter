@@ -7,7 +7,7 @@ const nodes: readonly Node[] = [
   {
     id: "personas",
     label: "Personas",
-    desc: "Flere simulerede brugere der tester produktet som rigtige mennesker — hver med deres egen baggrund, behov og frustrationer.",
+    desc: "Flere simulerede brugere der tester produktet — hver med deres egen baggrund, behov og frustrationer.",
     x: 8,
     y: 50,
     tone: "orange",
@@ -48,7 +48,7 @@ const nodes: readonly Node[] = [
   {
     id: "build",
     label: "Imple\u00ADmentering",
-    desc: "Mig + Claude Code bygger løsningen. Produktet går live, og personaerne tester igen.",
+    desc: "Mig + AI bygger løsningen. Produktet går live, og personaerne tester igen.",
     x: 90,
     y: 50,
     tone: "pink",
@@ -80,9 +80,9 @@ export function HowIWork() {
       id="arbejder"
       variant="chapter"
       chapterNumber={2}
-      eyebrow="Sådan arbejder jeg"
-      title="Jeg bygger ikke bare med AI — jeg bygger agent-teams."
-      intro="Da jeg byggede Monimo, satte jeg et agent-team op til at teste og forbedre produktet. Flere personas tester, en projektleder-agent prioriterer, og et lille hold af specialister eksekverer."
+      eyebrow="Sådan orkestrerer jeg AI"
+      title="AI er ikke min assistent — det er mit team."
+      intro="Når jeg har startet et projekt, sætter jeg undervejs et agent-team op til at teste og forbedre produktet. Flere personas tester, en projektleder-agent prioriterer, og et lille hold af specialister eksekverer."
     >
       <NodeGraph nodes={nodes} edges={edges} idPrefix="work" compact />
     </Section>

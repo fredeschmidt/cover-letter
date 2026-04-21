@@ -36,12 +36,6 @@ const contentBgStyle = {
     "radial-gradient(500px 300px at 10% -10%, rgba(187, 180, 254, 0.14), transparent 60%), radial-gradient(400px 260px at 100% 0%, rgba(232, 252, 135, 0.12), transparent 60%)",
 } as const;
 
-const gridOverlayStyle = {
-  backgroundImage:
-    "linear-gradient(to right, #141414 1px, transparent 1px), linear-gradient(to bottom, #141414 1px, transparent 1px)",
-  backgroundSize: "26px 26px",
-} as const;
-
 const titleStyle = { letterSpacing: "-0.015em" } as const;
 const surplusColorStyle = { color: "#141414" } as const;
 
@@ -62,12 +56,6 @@ export function MonimoPreview() {
 
       {/* Mock content */}
       <div className="relative p-4" style={contentBgStyle}>
-        {/* Grid overlay */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={gridOverlayStyle}
-        />
-
         <div className="relative">
           <div className="mb-1 text-[10px] font-medium tracking-[0.15em] text-[var(--color-lilla-dim)] uppercase">
             Byg dit budget
