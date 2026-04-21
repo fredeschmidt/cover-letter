@@ -19,13 +19,13 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.4, delay: 0.1 }}
-          className="absolute -top-20 -left-10 h-[180px] w-[180px] rounded-full bg-[var(--color-lime)] opacity-[0.12] blur-[70px] md:h-[260px] md:w-[260px] md:opacity-[0.18] md:blur-[90px]"
+          className="absolute -top-20 -left-10 h-[180px] w-[180px] rounded-full bg-[var(--color-lime)] opacity-[0.06] blur-[70px] md:h-[260px] md:w-[260px] md:opacity-[0.09] md:blur-[90px]"
         />
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.4, delay: 0.25 }}
-          className="absolute -top-16 right-[-40px] h-[160px] w-[160px] rounded-full bg-[var(--color-pink)] opacity-[0.1] blur-[70px] md:h-[240px] md:w-[240px] md:opacity-[0.15] md:blur-[90px]"
+          className="absolute -top-16 right-[-40px] h-[160px] w-[160px] rounded-full bg-[var(--color-pink)] opacity-[0.05] blur-[70px] md:h-[240px] md:w-[240px] md:opacity-[0.08] md:blur-[90px]"
         />
       </div>
       <div className="relative mx-auto w-full max-w-2xl text-center">
