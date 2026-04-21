@@ -4,15 +4,15 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { pair } from "@/lib/motion";
 
-const regions: readonly string[] = [
-  "Østjylland",
-  "Bornholm",
-  "Fyn",
-  "Midtvest",
-  "Nord",
-  "Syd",
-  "Øst",
-  "Lorry",
+const themes: readonly string[] = [
+  "Tema 01",
+  "Tema 02",
+  "Tema 03",
+  "Tema 04",
+  "Tema 05",
+  "Tema 06",
+  "Tema 07",
+  "Tema 08",
 ];
 
 type ButtonVariant = "primary" | "secondary";
@@ -76,14 +76,14 @@ export function TV2RegPreview() {
       <div className="flex items-center gap-2 border-b border-[var(--color-border)] bg-[rgba(20,20,20,0.03)] px-3 py-2">
         <FigmaMark />
         <div className="ml-1 flex flex-1 items-center gap-2 text-[11px] text-[var(--color-muted-foreground)]">
-          <span className="text-[var(--color-foreground)]/85">TV2 Regionernes designsystem</span>
+          <span className="text-[var(--color-foreground)]/85">Multi-brand designsystem</span>
           <span className="opacity-50">/</span>
           <span>Buttons</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-[var(--color-lime-dim)]" />
           <span className="text-[10px] text-[var(--color-muted-foreground)]">
-            8 regioner
+            8 temaer
           </span>
         </div>
       </div>
@@ -124,7 +124,7 @@ export function TV2RegPreview() {
               </span>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {regions.map((name) => (
+              {themes.map((name) => (
                 <div
                   key={name}
                   className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.6)] px-2 py-1"

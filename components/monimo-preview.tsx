@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import { BrowserChrome } from "@/components/browser-chrome";
 import { pair } from "@/lib/motion";
 
@@ -50,7 +51,7 @@ export function MonimoPreview() {
       viewport={{ once: true, margin: "-40px" }}
       transition={pair}
       whileHover={{ y: -3 }}
-      className="group block overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] transition-all"
+      className="group block overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] shadow-sm transition-all hover:border-[var(--color-lilla)] hover:shadow-lg"
     >
       <BrowserChrome url="monimo.dk/budget" showArrow />
 
@@ -115,6 +116,11 @@ export function MonimoPreview() {
             </span>
           </div>
         </div>
+      </div>
+
+      <div className="flex items-center justify-between border-t border-[var(--color-border)] bg-[rgba(138,126,239,0.08)] px-4 py-2.5 text-xs font-medium text-[var(--color-lilla)] transition-colors group-hover:bg-[rgba(138,126,239,0.14)]">
+        <span>Besøg monimo.dk</span>
+        <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </div>
     </motion.a>
   );

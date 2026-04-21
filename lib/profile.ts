@@ -58,13 +58,13 @@ export const projects: Project[] = [
   },
   {
     slug: "tv2reg-designsystem",
-    title: "Figma-integration og design tokens på tværs af regioner",
-    tagline: "Jeg har bygget et setup, hvor repo-baserede komponenter blev omsat til Figma-atom-komponenter, så de kunne styres af design tokens.",
+    title: "Designsystem med tokens på tværs af brands",
+    tagline: "Jeg lagde fundamentet for et fælles designsystem, hvor komponenter i kode og Figma kan styres gennem design tokens.",
     year: "2026",
-    status: "i drift",
+    status: "igangværende",
     stack: ["Figma", "MCP", "TypeScript", "Designsystem"],
     problem:
-      "Hver region havde sit eget frontend-udtryk, hvilket gjorde løsningen tung at vedligeholde. Derfor opstod behovet for et fælles designsystem med udgangspunkt i Figma, hvor hver regions visuelle identitet kunne styres gennem tokens, så vedligeholdelse på tværs af regioner og design blev enklere.",
+      "Flere brands deler samme tekniske fundament, men har hver sit visuelle udtryk. Når design og kode ikke trækker fra samme kilde, bliver løsningen tung at vedligeholde. Derfor opstod behovet for et fælles system, hvor hver identitet kan styres gennem tokens.",
     process: [
       "Hentede atom-komponenter fra de eksisterende repo-baserede komponenter ind i Figma.",
       "Omsatte dem til genbrugelige Figma-komponenter, der kunne styres via design tokens.",
