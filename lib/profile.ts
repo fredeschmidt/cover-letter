@@ -14,7 +14,7 @@ export type Project = {
   title: string;
   tagline: string;
   year: string;
-  status: "aktiv" | "afsluttet" | "i drift";
+  status: "aktiv" | "afsluttet" | "i drift" | "igangværende";
   stack: string[];
   problem: string;
   process: string[];
