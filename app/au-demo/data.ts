@@ -10,8 +10,6 @@ export type SavedProgram = {
   title: string;
   /** Hovedtekst for deadline-pille, fx "Frist 15. marts" eller "Svar 26. juli" */
   deadline: string;
-  /** Parentetisk note der vises som small caps, fx "kvote 2" */
-  deadlineNote?: string;
   /** ISO-dato bruges til countdown ("23 dage") relativt til demoToday */
   deadlineDate?: string;
   isUrgent?: boolean;
@@ -19,7 +17,7 @@ export type SavedProgram = {
   submittedDate?: string;
 };
 
-// Demoens "i dag" — sat så fase 1's kvote 2-frist ligger 23 dage ude og føles akut.
+// Demoens "i dag" — sat så fase 1's marts-frist ligger 23 dage ude og føles akut.
 // Reel dato kunne hentes fra Date.now(), men en fast demoToday gør prototypen stabil.
 export const demoToday = "2026-02-20" as const;
 
@@ -77,7 +75,6 @@ export const savedPrograms: SavedProgram[] = [
     phaseId: "interested",
     title: "Datavidenskab",
     deadline: "Frist 15. marts",
-    deadlineNote: "kvote 2",
     deadlineDate: "2026-03-15",
     isUrgent: true,
   },
@@ -85,7 +82,6 @@ export const savedPrograms: SavedProgram[] = [
     phaseId: "interested",
     title: "Cognitive Science",
     deadline: "Frist 15. marts",
-    deadlineNote: "kvote 2",
     deadlineDate: "2026-03-15",
     isUrgent: true,
   },
@@ -93,7 +89,6 @@ export const savedPrograms: SavedProgram[] = [
     phaseId: "interested",
     title: "Informationsvidenskab",
     deadline: "Frist 5. juli",
-    deadlineNote: "kvote 1",
   },
 
   {
