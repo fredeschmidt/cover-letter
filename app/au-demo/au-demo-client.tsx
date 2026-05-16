@@ -2,20 +2,23 @@
 
 import { useState, type CSSProperties } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, Check, Compass } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   demoToday,
   draftApplications,
   journeyPhases,
   phaseActivities,
-  phaseSteps,
+  phaseConfigs,
   savedPrograms,
+  suItems,
+  uploadedDocuments,
   type DraftApplication,
   type JourneyPhaseId,
   type PhaseActivity,
-  type PhaseStep,
+  type SUItem,
   type SavedProgram,
+  type UploadedDocument,
 } from "./data";
 
 function daysUntil(targetISO: string, fromISO: string): number {
@@ -38,18 +41,21 @@ const auDemoTheme = {
   "--color-lilla": "#2563eb",
   "--color-lilla-dim": "#1d4ed8",
   "--color-lilla-soft": "rgba(37, 99, 235, 0.10)",
-  "--color-done-dim": "#475569",
-  "--color-done-soft": "rgba(100, 116, 139, 0.14)",
+  "--color-done-dim": "#047857",
+  "--color-done-soft": "rgba(16, 185, 129, 0.14)",
 } as CSSProperties;
 
 export function AuDemoClient() {
   const [activePhase, setActivePhase] = useState<JourneyPhaseId>("interested");
 
   const activeIndex = journeyPhases.findIndex((p) => p.id === activePhase);
-  const steps = phaseSteps.filter((s) => s.phaseId === activePhase);
   const programs = savedPrograms.filter((p) => p.phaseId === activePhase);
   const activities = phaseActivities.filter((a) => a.phaseId === activePhase);
   const drafts = draftApplications.filter((d) => d.phaseId === activePhase);
+  const documents = uploadedDocuments.filter((d) => d.phaseId === activePhase);
+  const su = suItems.filter((s) => s.phaseId === activePhase);
+
+  const phaseConfig = phaseConfigs[activePhase];
 
   return (
     <div style={auDemoTheme}>
@@ -81,7 +87,6 @@ export function AuDemoClient() {
                 active={activePhase}
                 activeIndex={activeIndex}
                 onChange={setActivePhase}
-                steps={steps}
               />
             </div>
           </div>
@@ -96,8 +101,16 @@ export function AuDemoClient() {
             {/* space-y styrer luft *mellem* sektioner, mens header.mb styrer
                 gabet til første sektion — så toppen ikke bliver tom uden hero. */}
             <div className="space-y-10 md:space-y-14">
-              {programs.length > 0 ? <SavedProgramsList programs={programs} /> : null}
+              {programs.length > 0 ? (
+                <SavedProgramsList
+                  programs={programs}
+                  title={phaseConfig.programsTitle}
+                  tone={phaseConfig.programsTone}
+                />
+              ) : null}
               {drafts.length > 0 ? <DraftApplicationsList drafts={drafts} /> : null}
+              {documents.length > 0 ? <DocumentsList documents={documents} /> : null}
+              {su.length > 0 ? <SUList items={su} /> : null}
               {activities.length > 0 ? <ActivitiesList activities={activities} /> : null}
             </div>
           </div>
@@ -124,12 +137,10 @@ function PhaseSideNav({
   active,
   activeIndex,
   onChange,
-  steps,
 }: {
   active: JourneyPhaseId;
   activeIndex: number;
   onChange: (id: JourneyPhaseId) => void;
-  steps: PhaseStep[];
 }) {
   return (
     <nav aria-label="Fase i AU-rejsen">
@@ -137,27 +148,15 @@ function PhaseSideNav({
         {journeyPhases.map((phase, i) => {
           const isActive = phase.id === active;
           const isPast = i < activeIndex;
-          const hasStepsPanel = isActive && steps.length > 0;
-          const panelId = `au-demo-phase-${phase.id}-steps`;
           return (
             <li key={phase.id}>
-              <div
-                className={cn(
-                  "rounded-xl",
-                  // Én bg-container for både fase-knap og substeps, så de to elementer
-                  // ikke producerer en synlig sub-pixel-grænse mellem ens translucent baggrunde.
-                  hasStepsPanel ? "bg-[var(--color-lilla-soft)]" : "",
-                )}
-              >
+              <div>
                 <button
                   type="button"
                   aria-current={isActive ? "step" : undefined}
-                  aria-expanded={isActive}
-                  aria-controls={hasStepsPanel ? panelId : undefined}
                   onClick={() => onChange(phase.id)}
                   className={cn(
                     "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
-                    isActive && !hasStepsPanel ? "bg-[var(--color-lilla-soft)]" : "",
                     !isActive ? "hover:bg-[var(--color-muted)]" : "",
                   )}
                 >
@@ -167,8 +166,8 @@ function PhaseSideNav({
                       isActive
                         ? "border-[var(--color-lilla)] bg-[var(--color-lilla)] text-white"
                         : isPast
-                        ? "border-[var(--color-lilla)] bg-[var(--color-muted)] text-[var(--color-lilla-dim)]"
-                        : "border-[var(--color-border)] bg-[var(--color-muted)] text-[var(--color-muted-foreground)] group-hover:border-[var(--color-lilla)]/60",
+                        ? "border-[var(--color-lilla)] bg-[var(--color-card)] text-[var(--color-lilla-dim)]"
+                        : "border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-muted-foreground)] group-hover:border-[var(--color-lilla)]/60",
                     )}
                   >
                     {isPast ? (
@@ -188,12 +187,6 @@ function PhaseSideNav({
                     {phase.shortLabel}
                   </span>
                 </button>
-
-                {hasStepsPanel ? (
-                  <div id={panelId} className="pb-3">
-                    <StepsList steps={steps} />
-                  </div>
-                ) : null}
               </div>
             </li>
           );
@@ -203,67 +196,32 @@ function PhaseSideNav({
   );
 }
 
-function StepsList({ steps }: { steps: PhaseStep[] }) {
-  return (
-    <ul className="mt-1 space-y-0.5">
-      {steps.map((step) => {
-        const isCurrent = step.status === "current";
-        const isDone = step.status === "done";
-        return (
-          <li key={step.title}>
-            <a
-              href="#"
-              onClick={(e) => e.preventDefault()}
-              aria-current={isCurrent ? "page" : undefined}
-              className="group flex items-start gap-2.5 rounded-lg px-3 py-1.5 transition-colors hover:bg-[var(--color-card)]/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
-            >
-              <span
-                className="mt-[3px] inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center"
-                aria-hidden
-              >
-                {isDone ? (
-                  <Check
-                    className="h-3.5 w-3.5 text-[var(--color-lilla)]/70"
-                    strokeWidth={3}
-                  />
-                ) : isCurrent ? (
-                  <span className="h-2 w-2 rounded-full bg-[var(--color-lilla)] ring-2 ring-[var(--color-lilla)]/25" />
-                ) : (
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-muted-foreground)]/40 transition-colors group-hover:bg-[var(--color-lilla)]" />
-                )}
-              </span>
-              <span
-                className={cn(
-                  "text-sm leading-snug transition-colors",
-                  isCurrent && "font-medium text-[var(--color-foreground)]",
-                  isDone && "text-[var(--color-muted-foreground)]/60 line-through decoration-[var(--color-muted-foreground)]/30",
-                  !isCurrent &&
-                    !isDone &&
-                    "text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]",
-                )}
-              >
-                {step.title}
-              </span>
-            </a>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
 /* -------------------- Gemte uddannelser -------------------- */
 
-function SavedProgramsList({ programs }: { programs: SavedProgram[] }) {
+function SavedProgramsList({
+  programs,
+  title = "Dine gemte uddannelser",
+  tone = "default",
+}: {
+  programs: SavedProgram[];
+  title?: string;
+  tone?: "default" | "submitted" | "accepted";
+}) {
   return (
     <section>
       <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-        Dine gemte uddannelser
+        {title}
       </h3>
       <ul className="grid gap-2">
         {programs.map((program) => (
           <li key={program.title}>
-            <SavedProgramRow program={program} />
+            {tone === "accepted" ? (
+              <AcceptedProgramHero program={program} />
+            ) : tone === "submitted" ? (
+              <SubmittedProgramRow program={program} />
+            ) : (
+              <SavedProgramRow program={program} />
+            )}
           </li>
         ))}
       </ul>
@@ -271,62 +229,135 @@ function SavedProgramsList({ programs }: { programs: SavedProgram[] }) {
   );
 }
 
+function AcceptedProgramHero({ program }: { program: SavedProgram }) {
+  // Hero-variant for fase 3: dette er målet med hele rejsen, så kortet får
+  // ekstra padding, et stort display-typografi-niveau, og en lilla "Optaget"-
+  // markering der signalerer at brugeren er nået i mål. Adskiller sig fra de
+  // strammere rækker netop fordi det er det øjeblik der bør fylde mest.
+  return (
+    <a
+      href="#"
+      onClick={(e) => e.preventDefault()}
+      aria-label={`Optaget på ${program.title} — ${program.deadline}`}
+      className="group block rounded-3xl border border-[var(--color-lilla)]/20 bg-gradient-to-br from-[var(--color-lilla-soft)] to-transparent p-6 transition-colors hover:border-[var(--color-lilla)]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:p-7"
+    >
+      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-lilla)]">
+        Optaget
+      </div>
+      <h4 className="mt-2 text-xl font-semibold leading-tight text-[var(--color-foreground)] md:text-2xl">
+        {program.title}
+      </h4>
+      <p className="mt-3 text-sm text-[var(--color-muted-foreground)]">
+        {program.deadline}
+      </p>
+    </a>
+  );
+}
+
 function SavedProgramRow({ program }: { program: SavedProgram }) {
-  // Urgent rækker viser countdown ("23 dage · 15. marts") som primært signal,
-  // så urgensen bæres af information frem for farve. Falder tilbage til den
-  // rå deadline-streng for ikke-urgente eller når deadlineDate mangler.
+  // Default-/urgent-variant: titel + højrestillet deadline-pille. Urgent rækker
+  // får lilla venstrekant + countdown ("23 dage") som primært signal, så urgensen
+  // bæres af information frem for farve alene.
   const countdownDays =
     program.isUrgent && program.deadlineDate
       ? daysUntil(program.deadlineDate, demoToday)
       : undefined;
-  const deadlineDisplay =
-    countdownDays !== undefined && countdownDays >= 0
-      ? `${countdownDays === 0 ? "I dag" : `${countdownDays} dage`} · ${program.deadline.replace(/^Frist\s+/i, "")}`
-      : program.deadline;
+  const showCountdown = countdownDays !== undefined && countdownDays >= 0;
+  const countdownLabel = countdownDays === 0 ? "I dag" : `${countdownDays} dage`;
+
+  // På urgent-rækker droppes "Frist "-præfikset fordi countdown'en allerede
+  // siger frist — så undgår vi "23 dage · Frist 15. marts".
+  const mainText = showCountdown
+    ? program.deadline.replace(/^Frist\s+/i, "")
+    : program.deadline;
+
+  const ariaParts = [
+    showCountdown ? countdownLabel : null,
+    mainText,
+    program.deadlineNote,
+  ].filter(Boolean);
+  const ariaDeadline = ariaParts.join(" · ");
+
   return (
     <a
       href="#"
       onClick={(e) => e.preventDefault()}
       aria-label={
         program.isUrgent
-          ? `${program.title} — ${deadlineDisplay}, frist nærmer sig`
-          : `${program.title} — ${deadlineDisplay}`
+          ? `${program.title} — ${ariaDeadline}, frist nærmer sig`
+          : `${program.title} — ${ariaDeadline}`
       }
       className={cn(
         "group flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
         program.isUrgent && "border-l-2 border-l-[var(--color-lilla)]",
       )}
     >
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          {program.isUrgent ? (
-            <span
-              aria-hidden
-              className="relative inline-flex h-1.5 w-1.5 shrink-0"
-            >
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-lilla)] opacity-60" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--color-lilla)]" />
-            </span>
-          ) : null}
-          <span className="min-w-0 truncate text-sm font-medium text-[var(--color-foreground)]">
-            {program.title}
+      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
+        {program.title}
+      </div>
+      <span
+        className={cn(
+          "shrink-0 inline-flex items-baseline gap-1.5 rounded-full px-2.5 py-1 tabular-nums",
+          program.isUrgent ? "bg-[var(--color-lilla-soft)]" : "",
+        )}
+      >
+        {showCountdown ? (
+          <span className="text-xs font-semibold text-[var(--color-lilla)]">
+            {countdownLabel}
           </span>
-        </div>
-        <div
+        ) : null}
+        <span
           className={cn(
-            "truncate text-xs tabular-nums",
+            "text-xs",
             program.isUrgent
-              ? "font-medium text-[var(--color-lilla-dim)]"
+              ? "text-[var(--color-lilla-dim)]"
               : "text-[var(--color-muted-foreground)]",
           )}
         >
-          {deadlineDisplay}
-        </div>
+          {mainText}
+        </span>
+        {program.deadlineNote ? (
+          <span
+            className={cn(
+              "text-[10px] uppercase tracking-wide",
+              program.isUrgent
+                ? "text-[var(--color-lilla-dim)]/60"
+                : "text-[var(--color-muted-foreground)]/60",
+            )}
+          >
+            {program.deadlineNote}
+          </span>
+        ) : null}
+      </span>
+    </a>
+  );
+}
+
+function SubmittedProgramRow({ program }: { program: SavedProgram }) {
+  // Submitted-variant for fase 2: grøn "Ansøgt X"-badge + grå deadline-pille
+  // ved siden af. Falder tilbage til en almindelig række hvis submittedDate
+  // ikke er sat — så datatype-fejl ikke giver et tomt UI.
+  if (!program.submittedDate) {
+    return <SavedProgramRow program={program} />;
+  }
+  return (
+    <a
+      href="#"
+      onClick={(e) => e.preventDefault()}
+      aria-label={`${program.title} — Ansøgt ${program.submittedDate}, ${program.deadline}`}
+      className="group flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+    >
+      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
+        {program.title}
       </div>
-      <ArrowUpRight
-        className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)] opacity-0 transition-opacity group-hover:opacity-100"
-        aria-hidden
-      />
+      <div className="shrink-0 inline-flex items-center gap-1 tabular-nums">
+        <span className="rounded-full bg-[var(--color-done-soft)] px-2.5 py-1 text-xs font-medium text-[var(--color-done-dim)]">
+          Ansøgt {program.submittedDate}
+        </span>
+        <span className="rounded-full px-2.5 py-1 text-xs text-[var(--color-muted-foreground)]">
+          {program.deadline}
+        </span>
+      </div>
     </a>
   );
 }
@@ -351,56 +382,24 @@ function DraftApplicationsList({ drafts }: { drafts: DraftApplication[] }) {
 }
 
 function DraftApplicationRow({ draft }: { draft: DraftApplication }) {
-  // Cirkulær progress-ring: r=12 i 28x28 viewBox. Den fulde omkreds bruges som
-  // strokeDasharray, og dashoffset trækkes proportionalt med progress så ringen
-  // fyldes med uret. -rotate-90 flytter startpunktet fra 3 til 12.
-  const ringCircumference = 2 * Math.PI * 12;
   return (
     <a
       href="#"
       onClick={(e) => e.preventDefault()}
-      aria-label={`Fortsæt motiveret ansøgning til ${draft.programTitle} (${draft.progress}% udfyldt)`}
-      className="group flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 pr-4 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+      aria-label={`Fortsæt motiveret ansøgning til ${draft.programTitle} — ${draft.ratio} ${draft.qualifier} (${draft.progress}%)`}
+      className="group flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
     >
-      <span
-        className="relative flex h-9 w-9 shrink-0 items-center justify-center"
-        aria-hidden
-      >
-        <svg viewBox="0 0 28 28" className="h-7 w-7 -rotate-90">
-          <circle
-            cx="14"
-            cy="14"
-            r="12"
-            fill="none"
-            stroke="var(--color-muted)"
-            strokeWidth="2.5"
-          />
-          <circle
-            cx="14"
-            cy="14"
-            r="12"
-            fill="none"
-            stroke="var(--color-lilla)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeDasharray={ringCircumference}
-            strokeDashoffset={ringCircumference * (1 - draft.progress / 100)}
-            className="transition-[stroke-dashoffset]"
-          />
-        </svg>
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium text-[var(--color-foreground)]">
-          {draft.programTitle}
-        </div>
-        <div className="truncate text-xs text-[var(--color-muted-foreground)]">
-          {draft.description}
-        </div>
+      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
+        {draft.programTitle}
       </div>
-      <ArrowUpRight
-        className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)] opacity-0 transition-opacity group-hover:opacity-100"
-        aria-hidden
-      />
+      <span className="shrink-0 inline-flex items-baseline gap-1.5 rounded-full px-2.5 py-1 tabular-nums">
+        <span className="text-xs text-[var(--color-muted-foreground)]">
+          {draft.ratio}
+        </span>
+        <span className="text-[10px] uppercase tracking-wide text-[var(--color-muted-foreground)]/60">
+          {draft.qualifier}
+        </span>
+      </span>
     </a>
   );
 }
@@ -411,7 +410,7 @@ function ActivitiesList({ activities }: { activities: PhaseActivity[] }) {
   return (
     <section>
       <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-        Tilmeldinger og muligheder
+        Info og tilmeldinger
       </h3>
       <ul className="grid gap-2 sm:grid-cols-2">
         {activities.map((activity) => (
@@ -430,45 +429,123 @@ function ActivityRow({ activity }: { activity: PhaseActivity }) {
     <a
       href="#"
       onClick={(e) => e.preventDefault()}
-      className="group flex h-full items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 pr-4 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+      className="group flex h-full items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
       aria-label={isDone ? `${activity.title} (tilmeldt)` : activity.title}
     >
+      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
+        {activity.title}
+      </div>
+      {activity.meta ? (
+        <span
+          className={cn(
+            "shrink-0 rounded-full px-2.5 py-1 text-xs",
+            isDone
+              ? "bg-[var(--color-done-soft)] font-medium text-[var(--color-done-dim)]"
+              : "text-[var(--color-muted-foreground)]",
+          )}
+        >
+          {activity.meta}
+        </span>
+      ) : null}
+    </a>
+  );
+}
+
+/* -------------------- Uploadet dokumenter -------------------- */
+
+function DocumentsList({ documents }: { documents: UploadedDocument[] }) {
+  return (
+    <section>
+      <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+        Uploadet dokumenter
+      </h3>
+      <ul className="grid gap-2">
+        {documents.map((doc) => (
+          <li key={doc.title}>
+            <DocumentRow document={doc} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function DocumentRow({ document }: { document: UploadedDocument }) {
+  const isMissing = document.status === "missing";
+  return (
+    <a
+      href="#"
+      onClick={(e) => e.preventDefault()}
+      className={cn(
+        "group flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
+        isMissing && "border-l-2 border-l-[var(--color-lilla)]",
+      )}
+      aria-label={`${document.title} — ${document.meta}`}
+    >
+      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
+        {document.title}
+      </div>
       <span
         className={cn(
-          "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors",
-          isDone
-            ? "bg-[var(--color-done-soft)] text-[var(--color-done-dim)]"
-            : "bg-[var(--color-muted)] text-[var(--color-muted-foreground)] group-hover:bg-[var(--color-lilla-soft)] group-hover:text-[var(--color-lilla-dim)]",
+          "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium",
+          isMissing
+            ? "bg-[var(--color-lilla-soft)] text-[var(--color-lilla)]"
+            : "bg-[var(--color-done-soft)] text-[var(--color-done-dim)]",
         )}
       >
-        {isDone ? (
-          <Check className="h-4 w-4" strokeWidth={3} aria-hidden />
-        ) : (
-          <Compass className="h-4 w-4" aria-hidden />
-        )}
+        {document.meta}
       </span>
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium text-[var(--color-foreground)]">
-          {activity.title}
-        </div>
-        {activity.meta ? (
-          <div
-            className={cn(
-              "truncate text-xs",
-              isDone
-                ? "font-medium text-[var(--color-done-dim)]"
-                : "text-[var(--color-muted-foreground)]",
-            )}
-          >
-            {activity.meta}
-          </div>
-        ) : null}
+    </a>
+  );
+}
+
+/* -------------------- SU -------------------- */
+
+function SUList({ items }: { items: SUItem[] }) {
+  return (
+    <section>
+      <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+        SU
+      </h3>
+      <ul className="grid gap-2 sm:grid-cols-2">
+        {items.map((item) => (
+          <li key={item.title}>
+            <SUItemRow item={item} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function SUItemRow({ item }: { item: SUItem }) {
+  const isDone = item.status === "done";
+  return (
+    <a
+      href="#"
+      onClick={(e) => e.preventDefault()}
+      className={cn(
+        "group flex h-full items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
+        item.isUrgent && "border-l-2 border-l-[var(--color-lilla)]",
+      )}
+      aria-label={isDone ? `${item.title} (klaret)` : item.title}
+    >
+      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
+        {item.title}
       </div>
-      {!isDone ? (
-        <ArrowUpRight
-          className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)] opacity-0 transition-opacity group-hover:opacity-100"
-          aria-hidden
-        />
+      {item.meta ? (
+        <span
+          className={cn(
+            "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium",
+            isDone
+              ? "bg-[var(--color-done-soft)] text-[var(--color-done-dim)]"
+              : item.isUrgent
+              ? "bg-[var(--color-lilla-soft)] text-[var(--color-lilla)]"
+              : "font-normal text-[var(--color-muted-foreground)]",
+          )}
+        >
+          {item.meta}
+        </span>
       ) : null}
     </a>
   );

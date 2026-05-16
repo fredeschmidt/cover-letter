@@ -5,21 +5,18 @@ export type JourneyPhase = {
   shortLabel: string;
 };
 
-export type PhaseStep = {
-  phaseId: JourneyPhaseId;
-  title: string;
-  status: "done" | "current" | "upcoming";
-  // Vises på Næste skridt-kassen når status === "current"
-  ctaLabel?: string;
-};
-
 export type SavedProgram = {
   phaseId: JourneyPhaseId;
   title: string;
+  /** Hovedtekst for deadline-pille, fx "Frist 15. marts" eller "Svar 26. juli" */
   deadline: string;
-  // ISO-dato bruges af UI'et til at vise countdown ("· 23 dage") relativt til demoToday
+  /** Parentetisk note der vises som small caps, fx "kvote 2" */
+  deadlineNote?: string;
+  /** ISO-dato bruges til countdown ("23 dage") relativt til demoToday */
   deadlineDate?: string;
   isUrgent?: boolean;
+  /** Fase 2 (sendte ansøgninger): vises i den grønne "Ansøgt X"-badge */
+  submittedDate?: string;
 };
 
 // Demoens "i dag" — sat så fase 1's kvote 2-frist ligger 23 dage ude og føles akut.
@@ -36,8 +33,33 @@ export type PhaseActivity = {
 export type DraftApplication = {
   phaseId: JourneyPhaseId;
   programTitle: string;
-  description: string;
+  /** Ratio som primary fact, fx "3 af 5" */
+  ratio: string;
+  /** Qualifier som small caps note, fx "trin udfyldt" */
+  qualifier: string;
   progress: number;
+};
+
+export type UploadedDocument = {
+  phaseId: JourneyPhaseId;
+  title: string;
+  meta: string;
+  status: "verified" | "missing";
+};
+
+export type SUItem = {
+  phaseId: JourneyPhaseId;
+  title: string;
+  meta?: string;
+  status: "done" | "open";
+  isUrgent?: boolean;
+};
+
+export type PhaseConfig = {
+  /** Sektionstitel for SavedProgramsList — listen skifter betydning på tværs af faser */
+  programsTitle: string;
+  /** Visuel tone på saved-program-rækker for denne fase */
+  programsTone: "default" | "submitted" | "accepted";
 };
 
 export const journeyPhases: JourneyPhase[] = [
@@ -47,78 +69,48 @@ export const journeyPhases: JourneyPhase[] = [
   { id: "student", shortLabel: "Studieliv" },
 ];
 
-// Steps pr. fase. Den med status="current" bliver fremhævet både i sidenaven
-// og som "Næste skridt" midt på siden.
-export const phaseSteps: PhaseStep[] = [
-  { phaseId: "interested", title: "Find den uddannelse, der passer til dig", status: "done" },
-  {
-    phaseId: "interested",
-    title: "Forbered din ansøgning",
-    status: "current",
-    ctaLabel: "Fortsæt din ansøgning",
-  },
-
-  {
-    phaseId: "applied",
-    title: "Hold øje med din ansøgning",
-    status: "current",
-    ctaLabel: "Se ansøgningsstatus",
-  },
-  { phaseId: "applied", title: "Upload manglende dokumentation", status: "upcoming" },
-  { phaseId: "applied", title: "Ret prioritering af uddannelser", status: "upcoming" },
-  { phaseId: "applied", title: "Søg studiebolig og SU", status: "upcoming" },
-
-  {
-    phaseId: "accepted",
-    title: "Accepter pladsen og kom godt i gang",
-    status: "current",
-    ctaLabel: "Accepter studieplads",
-  },
-  { phaseId: "accepted", title: "Aktivér AU-login", status: "upcoming" },
-  { phaseId: "accepted", title: "Tilmeld dig introforløb", status: "upcoming" },
-  { phaseId: "accepted", title: "Find pensum til 1. semester", status: "upcoming" },
-
-  {
-    phaseId: "student",
-    title: "Få overblik over din studiedag",
-    status: "current",
-    ctaLabel: "Se dagens overblik",
-  },
-  { phaseId: "student", title: "Tilmeld dig eksamen", status: "upcoming" },
-  { phaseId: "student", title: "Følg dine karakterer", status: "upcoming" },
-  { phaseId: "student", title: "Tilmeld kurser næste semester", status: "upcoming" },
-];
+export const phaseConfigs: Record<JourneyPhaseId, PhaseConfig> = {
+  interested: { programsTitle: "Dine gemte uddannelser", programsTone: "default" },
+  applied: { programsTitle: "Sendte ansøgninger", programsTone: "submitted" },
+  accepted: { programsTitle: "Optaget på", programsTone: "accepted" },
+  student: { programsTitle: "Dine gemte uddannelser", programsTone: "default" },
+};
 
 export const savedPrograms: SavedProgram[] = [
   {
     phaseId: "interested",
     title: "Datavidenskab",
-    deadline: "Frist 15. marts (kvote 2)",
+    deadline: "Frist 15. marts",
+    deadlineNote: "kvote 2",
     deadlineDate: "2026-03-15",
     isUrgent: true,
   },
   {
     phaseId: "interested",
     title: "Cognitive Science",
-    deadline: "Frist 15. marts (kvote 2)",
+    deadline: "Frist 15. marts",
+    deadlineNote: "kvote 2",
     deadlineDate: "2026-03-15",
     isUrgent: true,
   },
   {
     phaseId: "interested",
     title: "Informationsvidenskab",
-    deadline: "Frist 5. juli (kvote 1)",
+    deadline: "Frist 5. juli",
+    deadlineNote: "kvote 1",
   },
 
   {
     phaseId: "applied",
     title: "Datavidenskab — 1. prioritet",
     deadline: "Svar 26. juli",
+    submittedDate: "12. marts",
   },
   {
     phaseId: "applied",
     title: "Cognitive Science — 2. prioritet",
     deadline: "Svar 26. juli",
+    submittedDate: "14. marts",
   },
 
   {
@@ -138,14 +130,23 @@ export const draftApplications: DraftApplication[] = [
   {
     phaseId: "interested",
     programTitle: "Datavidenskab",
-    description: "Motiveret ansøgning · 3 af 5 trin udfyldt",
+    ratio: "3 af 5",
+    qualifier: "trin udfyldt",
     progress: 60,
   },
   {
     phaseId: "interested",
     programTitle: "Cognitive Science",
-    description: "Motiveret ansøgning · 1 af 5 trin udfyldt",
+    ratio: "1 af 5",
+    qualifier: "trin udfyldt",
     progress: 20,
+  },
+  {
+    phaseId: "interested",
+    programTitle: "Informationsvidenskab",
+    ratio: "0 af 5",
+    qualifier: "trin udfyldt",
+    progress: 0,
   },
 ];
 
@@ -160,22 +161,9 @@ export const phaseActivities: PhaseActivity[] = [
   { phaseId: "interested", title: "Få hjælp til at vælge studie", status: "open" },
   { phaseId: "interested", title: "Sammenlign uddannelser", status: "open" },
 
-  {
-    phaseId: "applied",
-    title: "Ansøgning indsendt",
-    meta: "Modtaget 14. marts",
-    status: "done",
-  },
-  { phaseId: "applied", title: "Find SU-vejledning", status: "open" },
   { phaseId: "applied", title: "Søg studiebolig", status: "open" },
   { phaseId: "applied", title: "Kontakt optagelsen", status: "open" },
 
-  {
-    phaseId: "accepted",
-    title: "Studieplads accepteret",
-    meta: "5. august",
-    status: "done",
-  },
   {
     phaseId: "accepted",
     title: "AU-login aktiveret",
@@ -184,6 +172,7 @@ export const phaseActivities: PhaseActivity[] = [
   },
   { phaseId: "accepted", title: "Tilmeld introforløb", status: "open" },
   { phaseId: "accepted", title: "Bestil studiekort", status: "open" },
+  { phaseId: "accepted", title: "Info om studiestart", status: "open" },
 
   {
     phaseId: "student",
@@ -194,4 +183,37 @@ export const phaseActivities: PhaseActivity[] = [
   { phaseId: "student", title: "Tilmeld eksamen", status: "open" },
   { phaseId: "student", title: "Book grupperum", status: "open" },
   { phaseId: "student", title: "Find pensum og litteratur", status: "open" },
+];
+
+export const uploadedDocuments: UploadedDocument[] = [
+  {
+    phaseId: "applied",
+    title: "Eksamensbevis",
+    meta: "Uploadet 12. marts",
+    status: "verified",
+  },
+  {
+    phaseId: "applied",
+    title: "Motiveret ansøgning",
+    meta: "Uploadet 14. marts",
+    status: "verified",
+  },
+  {
+    phaseId: "applied",
+    title: "Karakterudskrift gymnasium",
+    meta: "Mangler",
+    status: "missing",
+  },
+];
+
+export const suItems: SUItem[] = [
+  {
+    phaseId: "applied",
+    title: "Søg om SU",
+    meta: "Frist 1. august",
+    status: "open",
+    isUrgent: true,
+  },
+  { phaseId: "applied", title: "Find SU-vejledning", status: "open" },
+  { phaseId: "applied", title: "Beregn SU-sats", status: "open" },
 ];
