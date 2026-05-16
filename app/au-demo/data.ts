@@ -17,8 +17,14 @@ export type SavedProgram = {
   phaseId: JourneyPhaseId;
   title: string;
   deadline: string;
+  // ISO-dato bruges af UI'et til at vise countdown ("· 23 dage") relativt til demoToday
+  deadlineDate?: string;
   isUrgent?: boolean;
 };
+
+// Demoens "i dag" — sat så fase 1's kvote 2-frist ligger 23 dage ude og føles akut.
+// Reel dato kunne hentes fra Date.now(), men en fast demoToday gør prototypen stabil.
+export const demoToday = "2026-02-20" as const;
 
 export type PhaseActivity = {
   phaseId: JourneyPhaseId;
@@ -88,12 +94,14 @@ export const savedPrograms: SavedProgram[] = [
     phaseId: "interested",
     title: "Datavidenskab",
     deadline: "Frist 15. marts (kvote 2)",
+    deadlineDate: "2026-03-15",
     isUrgent: true,
   },
   {
     phaseId: "interested",
     title: "Cognitive Science",
     deadline: "Frist 15. marts (kvote 2)",
+    deadlineDate: "2026-03-15",
     isUrgent: true,
   },
   {

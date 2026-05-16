@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
+  demoToday,
   draftApplications,
   journeyPhases,
   phaseActivities,
@@ -23,6 +24,20 @@ import {
   type PhaseStep,
   type SavedProgram,
 } from "./data";
+
+function daysUntil(targetISO: string, fromISO: string): number {
+  const MS_PER_DAY = 1000 * 60 * 60 * 24;
+  const from = new Date(fromISO + "T00:00:00").getTime();
+  const target = new Date(targetISO + "T00:00:00").getTime();
+  return Math.round((target - from) / MS_PER_DAY);
+}
+
+function formatCountdown(days: number): string | undefined {
+  if (days < 0) return undefined;
+  if (days === 0) return "i dag";
+  if (days === 1) return "i morgen";
+  return `${days} dage`;
+}
 
 // Scoped palette: neutral light surface + blue brand. Inlined so it covers the
 // portfolio's aurora and overrides shared CSS variables only for this page.
@@ -66,6 +81,23 @@ export function AuDemoClient() {
   })[0];
   const featuredProgram = featuredDraft
     ? programs.find((p) => p.title === featuredDraft.programTitle)
+    : undefined;
+
+  // Andre kladder der deler den fremhævede kladdes akutte frist. Begrænses
+  // bevidst til samme deadlineDate så hero-kortets "samme frist"-tekst er sand.
+  const otherUrgentDrafts =
+    featuredDraft && featuredProgram?.deadlineDate
+      ? drafts
+          .filter((d) => {
+            if (d === featuredDraft) return false;
+            const p = programs.find((p) => p.title === d.programTitle);
+            return p?.isUrgent && p.deadlineDate === featuredProgram.deadlineDate;
+          })
+          .map((d) => ({ title: d.programTitle, progress: d.progress }))
+      : [];
+
+  const featuredCountdown = featuredProgram?.deadlineDate
+    ? formatCountdown(daysUntil(featuredProgram.deadlineDate, demoToday))
     : undefined;
 
   return (
@@ -118,9 +150,11 @@ export function AuDemoClient() {
               <NextStepCard
                 title={`Færdiggør ansøgning til ${featuredDraft.programTitle}`}
                 deadline={featuredProgram.deadline}
+                countdown={featuredCountdown}
                 isUrgent={featuredProgram.isUrgent}
                 progress={featuredDraft.progress}
                 ctaLabel={`Fortsæt (${featuredDraft.progress}% udfyldt)`}
+                otherUrgentDrafts={otherUrgentDrafts}
               />
             ) : activeNextStep ? (
               <NextStepCard
@@ -291,15 +325,19 @@ function StepsList({ steps }: { steps: PhaseStep[] }) {
 function NextStepCard({
   title,
   deadline,
+  countdown,
   isUrgent,
   progress,
   ctaLabel,
+  otherUrgentDrafts,
 }: {
   title: string;
   deadline?: string;
+  countdown?: string;
   isUrgent?: boolean;
   progress?: number;
   ctaLabel?: string;
+  otherUrgentDrafts?: Array<{ title: string; progress: number }>;
 }) {
   return (
     <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-16px_rgba(15,23,42,0.12)] md:p-8">
@@ -313,6 +351,20 @@ function NextStepCard({
           )}
         >
           {deadline}
+          {countdown ? (
+            <>
+              <span
+                aria-hidden
+                className={cn(
+                  "mx-1.5",
+                  isUrgent ? "text-red-400" : "text-[var(--color-muted-foreground)]/50",
+                )}
+              >
+                ·
+              </span>
+              <span className="tabular-nums">{countdown}</span>
+            </>
+          ) : null}
           {isUrgent ? <span className="sr-only"> — frist nærmer sig</span> : null}
         </span>
       ) : null}
@@ -348,6 +400,31 @@ function NextStepCard({
           {ctaLabel}
           <ArrowUpRight className="h-4 w-4" aria-hidden />
         </a>
+      ) : null}
+      {otherUrgentDrafts && otherUrgentDrafts.length > 0 ? (
+        <ul className="mt-5 flex flex-col gap-1.5 border-t border-[var(--color-border)] pt-4">
+          {otherUrgentDrafts.map((d) => (
+            <li key={d.title}>
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                className="group inline-flex items-center gap-1.5 rounded-sm text-sm text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+              >
+                <span>
+                  Også åben med samme frist:{" "}
+                  <span className="font-medium text-[var(--color-foreground)]">
+                    {d.title}
+                  </span>{" "}
+                  ({d.progress}% udfyldt)
+                </span>
+                <ArrowUpRight
+                  className="h-3.5 w-3.5 opacity-60 transition-opacity group-hover:opacity-100"
+                  aria-hidden
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
       ) : null}
     </div>
   );
