@@ -1,8 +1,19 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useState, type ComponentType, type CSSProperties, type SVGProps } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowLeft,
+  Bookmark,
+  Check,
+  Clock,
+  ExternalLink,
+  FileCheck,
+  Send,
+  Sparkles,
+  Wallet,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   demoToday,
@@ -20,6 +31,10 @@ import {
   type SavedProgram,
   type UploadedDocument,
 } from "./data";
+
+// Pegt mod SVG-komponent-typen lucide eksporterer, så vi kan tage ikoner
+// som props uden at trække i ikon-bibliotekets interne typer.
+type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
 function daysUntil(targetISO: string, fromISO: string): number {
   const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -93,26 +108,47 @@ export function AuDemoClient() {
 
           <div>
             <header className="mb-6 md:mb-8">
-              <h1 className="display text-balance text-2xl leading-[1.1] md:text-3xl">
+              <PhaseProgressDots activeIndex={activeIndex} />
+              <h1 className="display mt-3 text-balance text-2xl leading-[1.1] md:text-3xl">
                 Velkommen tilbage, Astrid
               </h1>
             </header>
 
-            {/* space-y styrer luft *mellem* sektioner, mens header.mb styrer
-                gabet til første sektion — så toppen ikke bliver tom uden hero. */}
-            <div className="space-y-10 md:space-y-14">
-              {programs.length > 0 ? (
-                <SavedProgramsList
-                  programs={programs}
-                  title={phaseConfig.programsTitle}
-                  tone={phaseConfig.programsTone}
-                />
-              ) : null}
-              {drafts.length > 0 ? <DraftApplicationsList drafts={drafts} /> : null}
-              {documents.length > 0 ? <DocumentsList documents={documents} /> : null}
-              {su.length > 0 ? <SUList items={su} /> : null}
-              {activities.length > 0 ? <ActivitiesList activities={activities} /> : null}
-            </div>
+            {/* AnimatePresence + key på phase: hver fase mounter på ny så
+                fase-skiftet bliver til en synlig transformation i stedet for
+                et abrupt swap. mode="wait" sikrer at exit-animationen er
+                færdig før den nye fase fader ind. */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activePhase}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+                className="space-y-10 md:space-y-14"
+              >
+                {programs.length > 0 ? (
+                  <SavedProgramsList
+                    programs={programs}
+                    drafts={drafts}
+                    title={phaseConfig.programsTitle}
+                    tone={phaseConfig.programsTone}
+                  />
+                ) : null}
+                {documents.length > 0 ? <DocumentsList documents={documents} /> : null}
+                {/* Fase 2 (applied) slår SU + Info sammen til "Mens du venter"
+                    — begge er sekundære i ventefasen og hører hjemme under
+                    samme overskrift. Andre faser viser dem hver for sig. */}
+                {activePhase === "applied" ? (
+                  <WhileWaitingList suItems={su} activities={activities} />
+                ) : (
+                  <>
+                    {su.length > 0 ? <SUList items={su} /> : null}
+                    {activities.length > 0 ? <ActivitiesList activities={activities} /> : null}
+                  </>
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
 
@@ -123,7 +159,7 @@ export function AuDemoClient() {
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-muted-foreground)]">
             En afgrænset UX-/frontend-case. Ikke et redesign, men et eksempel på
             hvordan en samlet studieportal kan binde rejsen fra interesse til
-            studieliv sammen.
+            optagelse sammen.
           </p>
         </footer>
       </main>
@@ -196,31 +232,114 @@ function PhaseSideNav({
   );
 }
 
+/* -------------------- Fase-indikator + sektionsoverskrift -------------------- */
+
+function PhaseProgressDots({ activeIndex }: { activeIndex: number }) {
+  // Spejler sidenav'en visuelt øverst i main content — så fase-konteksten er
+  // synlig også når øjet er fokuseret på hovedindholdet, og på smalle skærme
+  // hvor sidenav'en stacker over indholdet.
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)] tabular-nums">
+        Fase {activeIndex + 1} af {journeyPhases.length}
+      </span>
+      <div className="flex gap-1.5" aria-hidden>
+        {journeyPhases.map((p, i) => (
+          <span
+            key={p.id}
+            className={cn(
+              "h-[3px] w-6 rounded-full transition-colors",
+              i <= activeIndex
+                ? "bg-[var(--color-lilla)]"
+                : "bg-[var(--color-muted)]",
+            )}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SectionHeading({
+  icon: Icon,
+  children,
+}: {
+  icon: IconComponent;
+  children: React.ReactNode;
+}) {
+  return (
+    <h3 className="mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+      <Icon className="h-3.5 w-3.5" aria-hidden />
+      {children}
+    </h3>
+  );
+}
+
 /* -------------------- Gemte uddannelser -------------------- */
 
 function SavedProgramsList({
   programs,
+  drafts = [],
   title = "Dine gemte uddannelser",
   tone = "default",
 }: {
   programs: SavedProgram[];
+  drafts?: DraftApplication[];
   title?: string;
   tone?: "default" | "submitted" | "accepted";
 }) {
+  // Drafts kobles på programmer via titel — så fase 1 viser én række pr.
+  // uddannelse i stedet for to parallelle lister med samme titler.
+  const draftByTitle = new Map(drafts.map((d) => [d.programTitle, d]));
+
+  // Tone-baseret ikon: hver fase får sin egen visuelle anker så sektioner
+  // ikke ligner gentagne identiske blokke. Accepted-tone springer overskriften
+  // helt over — hero'en har sin egen "OPTAGET"-eyebrow, så en ekstra
+  // sektionsoverskrift ovenover ville gentage det samme signal.
+  const HeadingIcon = tone === "submitted" ? Send : Bookmark;
+
+  // Fase 1: find primær række = højest draft-progress blandt urgent-programmer.
+  // Den får hero-behandling, så "næste handling" er entydig. Resten falder bagud
+  // som kompakte rækker. Hvis ingen drafts findes, bærer den første urgent
+  // række hero'en alligevel — så der altid er ét tydeligt fokuspunkt.
+  let primaryIndex = -1;
+  if (tone === "default") {
+    let bestScore = -1;
+    programs.forEach((p, i) => {
+      if (!p.isUrgent) return;
+      const d = draftByTitle.get(p.title);
+      const score = d ? d.progress : 0;
+      if (score > bestScore) {
+        bestScore = score;
+        primaryIndex = i;
+      }
+    });
+    // Fallback: hvis ingen urgent, første program bliver primær.
+    if (primaryIndex === -1 && programs.length > 0) primaryIndex = 0;
+  }
+
   return (
     <section>
-      <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-        {title}
-      </h3>
-      <ul className="grid gap-2">
-        {programs.map((program) => (
+      {tone !== "accepted" ? (
+        <SectionHeading icon={HeadingIcon}>{title}</SectionHeading>
+      ) : null}
+      <ul className={cn("grid", tone === "default" ? "gap-3" : "gap-2")}>
+        {programs.map((program, i) => (
           <li key={program.title}>
             {tone === "accepted" ? (
               <AcceptedProgramHero program={program} />
             ) : tone === "submitted" ? (
               <SubmittedProgramRow program={program} />
+            ) : i === primaryIndex ? (
+              <PrimaryProgramHero
+                program={program}
+                draft={draftByTitle.get(program.title)}
+              />
             ) : (
-              <SavedProgramRow program={program} />
+              <SavedProgramRow
+                program={program}
+                draft={draftByTitle.get(program.title)}
+              />
             )}
           </li>
         ))}
@@ -232,15 +351,11 @@ function SavedProgramsList({
 function AcceptedProgramHero({ program }: { program: SavedProgram }) {
   // Hero-variant for fase 3: dette er målet med hele rejsen, så kortet får
   // ekstra padding, et stort display-typografi-niveau, og en lilla "Optaget"-
-  // markering der signalerer at brugeren er nået i mål. Adskiller sig fra de
-  // strammere rækker netop fordi det er det øjeblik der bør fylde mest.
+  // markering der signalerer at brugeren er nået i mål. Den primære handling
+  // (gå videre til MitStudie) bæres af en eksplicit CTA-knap frem for at
+  // gøre hele kortet klikbart — så det er entydigt hvor brugeren går hen.
   return (
-    <a
-      href="#"
-      onClick={(e) => e.preventDefault()}
-      aria-label={`Optaget på ${program.title} — ${program.deadline}`}
-      className="group block rounded-3xl border border-[var(--color-lilla)]/20 bg-gradient-to-br from-[var(--color-lilla-soft)] to-transparent p-6 transition-colors hover:border-[var(--color-lilla)]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:p-7"
-    >
+    <div className="rounded-3xl border border-[var(--color-lilla)]/20 bg-gradient-to-br from-[var(--color-lilla-soft)] to-transparent p-6 md:p-7">
       <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-lilla)]">
         Optaget
       </div>
@@ -250,93 +365,188 @@ function AcceptedProgramHero({ program }: { program: SavedProgram }) {
       <p className="mt-3 text-sm text-[var(--color-muted-foreground)]">
         {program.deadline}
       </p>
-    </a>
+      <button
+        type="button"
+        className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--color-lilla)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-lilla-dim)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)]"
+      >
+        Gå til MitStudie
+        <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+      </button>
+    </div>
   );
 }
 
-function SavedProgramRow({ program }: { program: SavedProgram }) {
-  // Default-/urgent-variant: titel + højrestillet deadline-pille. Urgent rækker
-  // får lilla venstrekant + countdown ("23 dage") som primært signal, så urgensen
-  // bæres af information frem for farve alene.
+function PrimaryProgramHero({
+  program,
+  draft,
+}: {
+  program: SavedProgram;
+  draft?: DraftApplication;
+}) {
+  // Fase 1-hero: dette er Astrids "næste handling". Countdown bliver dominant
+  // tekst (ikke pille — pille er for de kompakte rækker). Progress-bar er fuld
+  // bredde uden ekstra tekst-label; bar'en ER signalet. CTA-knappen står som
+  // entydig næste handling så øjet lander på den uden tvivl. KVOTE-noten er
+  // bevidst udeladt — jargon hører hjemme på detaljesiden, ikke på dashboardet.
+  const countdownDays = program.deadlineDate
+    ? daysUntil(program.deadlineDate, demoToday)
+    : undefined;
+  const showCountdown = countdownDays !== undefined && countdownDays >= 0;
+  const countdownLabel =
+    countdownDays === 0
+      ? "I dag"
+      : countdownDays === 1
+      ? "Om 1 dag"
+      : `Om ${countdownDays} dage`;
+
+  const ariaLabel = draft
+    ? `${program.title} — ${showCountdown ? countdownLabel + ", " : ""}${program.deadline}. Ansøgning ${draft.ratio} trin udfyldt. Fortsæt ansøgning.`
+    : `${program.title} — ${showCountdown ? countdownLabel + ", " : ""}${program.deadline}.`;
+
+  return (
+    <div
+      className={cn(
+        "rounded-3xl border bg-[var(--color-card)] p-5 md:p-6",
+        program.isUrgent
+          ? "border-[var(--color-lilla)]/30 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_28px_-14px_rgba(37,99,235,0.25)]"
+          : "border-[var(--color-border)]",
+      )}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <h4 className="min-w-0 text-lg font-semibold leading-tight text-[var(--color-foreground)] md:text-xl">
+          {program.title}
+        </h4>
+        {showCountdown ? (
+          <div className="shrink-0 text-right">
+            <div className="text-sm font-semibold text-[var(--color-lilla)] tabular-nums">
+              {countdownLabel}
+            </div>
+            <div className="mt-0.5 text-[11px] text-[var(--color-muted-foreground)] tabular-nums">
+              {program.deadline}
+            </div>
+          </div>
+        ) : (
+          <div className="shrink-0 text-[11px] text-[var(--color-muted-foreground)] tabular-nums">
+            {program.deadline}
+          </div>
+        )}
+      </div>
+      {draft ? (
+        <div className="mt-4">
+          <div
+            className="h-1.5 overflow-hidden rounded-full bg-[var(--color-muted)]"
+            role="progressbar"
+            aria-valuenow={draft.progress}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Ansøgning ${draft.ratio} trin udfyldt`}
+          >
+            <div
+              aria-hidden
+              className="h-full rounded-full bg-[var(--color-lilla)] transition-[width] duration-300"
+              style={{ width: `${draft.progress}%` }}
+            />
+          </div>
+          <div className="mt-1.5 text-[11px] text-[var(--color-muted-foreground)] tabular-nums">
+            {draft.ratio} trin udfyldt
+          </div>
+        </div>
+      ) : null}
+      <button
+        type="button"
+        aria-label={ariaLabel}
+        className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--color-lilla)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-lilla-dim)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)]"
+      >
+        {draft && draft.progress > 0 ? "Fortsæt ansøgning" : "Start ansøgning"}
+      </button>
+    </div>
+  );
+}
+
+function SavedProgramRow({
+  program,
+  draft,
+}: {
+  program: SavedProgram;
+  draft?: DraftApplication;
+}) {
+  // Sekundær-variant for fase 1: kompakt række uden tung card-chrome, så hero'en
+  // ovenover får lov at dominere. Countdown som lille lilla pille hvis urgent,
+  // ellers blot "Frist 15. marts" som dæmpet tekst. Progress-bar bevares som
+  // én tynd linje i bunden — bar'en ER status; ingen ekstra tekst-label.
+  // KVOTE-note er fjernet fra dashboardet (jargon → detaljesiden).
   const countdownDays =
     program.isUrgent && program.deadlineDate
       ? daysUntil(program.deadlineDate, demoToday)
       : undefined;
   const showCountdown = countdownDays !== undefined && countdownDays >= 0;
-  const countdownLabel = countdownDays === 0 ? "I dag" : `${countdownDays} dage`;
-
-  // På urgent-rækker droppes "Frist "-præfikset fordi countdown'en allerede
-  // siger frist — så undgår vi "23 dage · Frist 15. marts".
-  const mainText = showCountdown
-    ? program.deadline.replace(/^Frist\s+/i, "")
-    : program.deadline;
+  const countdownLabel =
+    countdownDays === 0
+      ? "I dag"
+      : countdownDays === 1
+      ? "Om 1 dag"
+      : `Om ${countdownDays} dage`;
 
   const ariaParts = [
     showCountdown ? countdownLabel : null,
-    mainText,
-    program.deadlineNote,
+    program.deadline,
   ].filter(Boolean);
-  const ariaDeadline = ariaParts.join(" · ");
+  const ariaDeadline = ariaParts.join(", ");
+  const baseAria = program.isUrgent
+    ? `${program.title} — ${ariaDeadline}, frist nærmer sig`
+    : `${program.title} — ${ariaDeadline}`;
+  const ariaLabel = draft
+    ? `${baseAria}. Ansøgning ${draft.ratio} trin udfyldt.`
+    : baseAria;
 
   return (
     <a
       href="#"
       onClick={(e) => e.preventDefault()}
-      aria-label={
-        program.isUrgent
-          ? `${program.title} — ${ariaDeadline}, frist nærmer sig`
-          : `${program.title} — ${ariaDeadline}`
-      }
-      className={cn(
-        "group flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
-        program.isUrgent && "border-l-2 border-l-[var(--color-lilla)]",
-      )}
+      aria-label={ariaLabel}
+      className="group block rounded-xl px-3 py-2.5 transition-colors hover:bg-[var(--color-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
     >
-      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
-        {program.title}
+      <div className="flex items-center gap-3">
+        <div className="min-w-0 flex-1 truncate text-sm text-[var(--color-foreground)]">
+          {program.title}
+        </div>
+        <div className="shrink-0 inline-flex items-baseline gap-2 tabular-nums">
+          {showCountdown ? (
+            <span className="inline-flex items-baseline rounded-full bg-[var(--color-lilla-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-lilla)]">
+              {countdownLabel}
+            </span>
+          ) : null}
+          <span className="text-[11px] text-[var(--color-muted-foreground)]">
+            {program.deadline}
+          </span>
+        </div>
       </div>
-      <span
-        className={cn(
-          "shrink-0 inline-flex items-baseline gap-1.5 rounded-full px-2.5 py-1 tabular-nums",
-          program.isUrgent ? "bg-[var(--color-lilla-soft)]" : "",
-        )}
-      >
-        {showCountdown ? (
-          <span className="text-xs font-semibold text-[var(--color-lilla)]">
-            {countdownLabel}
-          </span>
-        ) : null}
-        <span
-          className={cn(
-            "text-xs",
-            program.isUrgent
-              ? "text-[var(--color-lilla-dim)]"
-              : "text-[var(--color-muted-foreground)]",
-          )}
+      {draft && draft.progress > 0 ? (
+        <div
+          className="mt-2 h-[2px] overflow-hidden rounded-full bg-[var(--color-muted)]"
+          role="progressbar"
+          aria-valuenow={draft.progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`Ansøgning ${draft.ratio} trin udfyldt`}
         >
-          {mainText}
-        </span>
-        {program.deadlineNote ? (
-          <span
-            className={cn(
-              "text-[10px] uppercase tracking-wide",
-              program.isUrgent
-                ? "text-[var(--color-lilla-dim)]/60"
-                : "text-[var(--color-muted-foreground)]/60",
-            )}
-          >
-            {program.deadlineNote}
-          </span>
-        ) : null}
-      </span>
+          <div
+            aria-hidden
+            className="h-full rounded-full bg-[var(--color-lilla)] transition-[width] duration-300"
+            style={{ width: `${draft.progress}%` }}
+          />
+        </div>
+      ) : null}
     </a>
   );
 }
 
 function SubmittedProgramRow({ program }: { program: SavedProgram }) {
-  // Submitted-variant for fase 2: grøn "Ansøgt X"-badge + grå deadline-pille
-  // ved siden af. Falder tilbage til en almindelig række hvis submittedDate
-  // ikke er sat — så datatype-fejl ikke giver et tomt UI.
+  // Submitted-variant for fase 2: matcher SavedProgramRow's kompakte stil
+  // (klikbar række, hover:bg-muted, ingen card-chrome) så de tre fase 2-sektioner
+  // deler samme lette grammatik. Bekræftelsen bæres af et blåt check-ikon ved
+  // "Ansøgt X", ikke af en farveflade — grøn er reserveret til verificerede docs.
+  // Falder tilbage til standard hvis submittedDate mangler.
   if (!program.submittedDate) {
     return <SavedProgramRow program={program} />;
   }
@@ -345,61 +555,26 @@ function SubmittedProgramRow({ program }: { program: SavedProgram }) {
       href="#"
       onClick={(e) => e.preventDefault()}
       aria-label={`${program.title} — Ansøgt ${program.submittedDate}, ${program.deadline}`}
-      className="group flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+      className="group block rounded-xl px-3 py-2.5 transition-colors hover:bg-[var(--color-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
     >
-      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
-        {program.title}
+      <div className="flex items-center gap-3">
+        <div className="min-w-0 flex-1 truncate text-sm text-[var(--color-foreground)]">
+          {program.title}
+        </div>
+        <div className="shrink-0 inline-flex items-center gap-2 text-[11px] tabular-nums">
+          <span className="inline-flex items-center gap-1 text-[var(--color-muted-foreground)]">
+            <Check
+              className="h-3 w-3 text-[var(--color-lilla)]"
+              strokeWidth={3}
+              aria-hidden
+            />
+            Ansøgt {program.submittedDate}
+          </span>
+          <span className="text-[var(--color-muted-foreground)]">
+            {program.deadline}
+          </span>
+        </div>
       </div>
-      <div className="shrink-0 inline-flex items-center gap-1 tabular-nums">
-        <span className="rounded-full bg-[var(--color-done-soft)] px-2.5 py-1 text-xs font-medium text-[var(--color-done-dim)]">
-          Ansøgt {program.submittedDate}
-        </span>
-        <span className="rounded-full px-2.5 py-1 text-xs text-[var(--color-muted-foreground)]">
-          {program.deadline}
-        </span>
-      </div>
-    </a>
-  );
-}
-
-/* -------------------- Forberedte ansøgninger -------------------- */
-
-function DraftApplicationsList({ drafts }: { drafts: DraftApplication[] }) {
-  return (
-    <section>
-      <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-        Forberedte ansøgninger
-      </h3>
-      <ul className="grid gap-2">
-        {drafts.map((draft) => (
-          <li key={draft.programTitle}>
-            <DraftApplicationRow draft={draft} />
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
-function DraftApplicationRow({ draft }: { draft: DraftApplication }) {
-  return (
-    <a
-      href="#"
-      onClick={(e) => e.preventDefault()}
-      aria-label={`Fortsæt motiveret ansøgning til ${draft.programTitle} — ${draft.ratio} ${draft.qualifier} (${draft.progress}%)`}
-      className="group flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
-    >
-      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
-        {draft.programTitle}
-      </div>
-      <span className="shrink-0 inline-flex items-baseline gap-1.5 rounded-full px-2.5 py-1 tabular-nums">
-        <span className="text-xs text-[var(--color-muted-foreground)]">
-          {draft.ratio}
-        </span>
-        <span className="text-[10px] uppercase tracking-wide text-[var(--color-muted-foreground)]/60">
-          {draft.qualifier}
-        </span>
-      </span>
     </a>
   );
 }
@@ -409,10 +584,8 @@ function DraftApplicationRow({ draft }: { draft: DraftApplication }) {
 function ActivitiesList({ activities }: { activities: PhaseActivity[] }) {
   return (
     <section>
-      <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-        Info og tilmeldinger
-      </h3>
-      <ul className="grid gap-2 sm:grid-cols-2">
+      <SectionHeading icon={Sparkles}>Info og tilmeldinger</SectionHeading>
+      <ul className="grid gap-1">
         {activities.map((activity) => (
           <li key={activity.title}>
             <ActivityRow activity={activity} />
@@ -424,27 +597,43 @@ function ActivitiesList({ activities }: { activities: PhaseActivity[] }) {
 }
 
 function ActivityRow({ activity }: { activity: PhaseActivity }) {
+  // List-format: done-rækker får en grøn check som visuel anker foran titlen
+  // så øjet kan skille "afsluttet" fra "kan jeg stadig gøre" på under et sekund
+  // (Gestalt: lighed). Open-rækker har en lige så bred placeholder-spacer så
+  // titler stadig venstrejusteres ens — listen flimrer ikke. Done-titler
+  // dæmpes en anelse i farve så de falder bagud i hierarkiet.
   const isDone = activity.status === "done";
   return (
     <a
       href="#"
       onClick={(e) => e.preventDefault()}
-      className="group flex h-full items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+      className="group flex items-baseline gap-2.5 py-2 transition-colors focus-visible:outline-none focus-visible:text-[var(--color-lilla)]"
       aria-label={isDone ? `${activity.title} (tilmeldt)` : activity.title}
     >
-      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
+      <span
+        className="flex h-4 w-4 shrink-0 translate-y-[2px] items-center justify-center"
+        aria-hidden
+      >
+        {isDone ? (
+          <Check
+            className="h-3.5 w-3.5 text-[var(--color-done-dim)]"
+            strokeWidth={3}
+          />
+        ) : null}
+      </span>
+      <span
+        className={cn(
+          "text-sm transition-colors group-hover:text-[var(--color-lilla)]",
+          isDone
+            ? "text-[var(--color-muted-foreground)]"
+            : "text-[var(--color-foreground)]",
+        )}
+      >
         {activity.title}
-      </div>
-      {activity.meta ? (
-        <span
-          className={cn(
-            "shrink-0 rounded-full px-2.5 py-1 text-xs",
-            isDone
-              ? "bg-[var(--color-done-soft)] font-medium text-[var(--color-done-dim)]"
-              : "text-[var(--color-muted-foreground)]",
-          )}
-        >
-          {activity.meta}
+      </span>
+      {activity.meta && !isDone ? (
+        <span className="text-xs text-[var(--color-muted-foreground)]">
+          · {activity.meta}
         </span>
       ) : null}
     </a>
@@ -456,10 +645,8 @@ function ActivityRow({ activity }: { activity: PhaseActivity }) {
 function DocumentsList({ documents }: { documents: UploadedDocument[] }) {
   return (
     <section>
-      <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-        Uploadet dokumenter
-      </h3>
-      <ul className="grid gap-2">
+      <SectionHeading icon={FileCheck}>Uploadet dokumenter</SectionHeading>
+      <ul className="grid gap-1">
         {documents.map((doc) => (
           <li key={doc.title}>
             <DocumentRow document={doc} />
@@ -471,31 +658,47 @@ function DocumentsList({ documents }: { documents: UploadedDocument[] }) {
 }
 
 function DocumentRow({ document }: { document: UploadedDocument }) {
+  // List-format som ActivityRow: verified = grøn check + dæmpet titel + dato
+  // som muted inline-tekst. Missing = lilla dot i samme slot-bredde så listen
+  // flugter, lilla titel, "Mangler" som plain lilla inline-tekst (ikke pille).
+  // Drop card-chrome — signal bæres af ikon + farve, ikke af kant og baggrund.
   const isMissing = document.status === "missing";
   return (
-    <a
-      href="#"
-      onClick={(e) => e.preventDefault()}
-      className={cn(
-        "group flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
-        isMissing && "border-l-2 border-l-[var(--color-lilla)]",
-      )}
-      aria-label={`${document.title} — ${document.meta}`}
-    >
-      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
-        {document.title}
-      </div>
+    <div className="flex items-baseline gap-2.5 py-2">
+      <span
+        className="flex h-4 w-4 shrink-0 translate-y-[2px] items-center justify-center"
+        aria-hidden
+      >
+        {isMissing ? (
+          <span className="block h-2 w-2 rounded-full bg-[var(--color-lilla)]" />
+        ) : (
+          <Check
+            className="h-3.5 w-3.5 text-[var(--color-done-dim)]"
+            strokeWidth={3}
+          />
+        )}
+      </span>
       <span
         className={cn(
-          "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium",
+          "text-sm",
           isMissing
-            ? "bg-[var(--color-lilla-soft)] text-[var(--color-lilla)]"
-            : "bg-[var(--color-done-soft)] text-[var(--color-done-dim)]",
+            ? "font-medium text-[var(--color-lilla)]"
+            : "text-[var(--color-muted-foreground)]",
         )}
       >
-        {document.meta}
+        {document.title}
       </span>
-    </a>
+      <span
+        className={cn(
+          "text-xs",
+          isMissing
+            ? "font-medium text-[var(--color-lilla)]"
+            : "text-[var(--color-muted-foreground)]",
+        )}
+      >
+        · {document.meta}
+      </span>
+    </div>
   );
 }
 
@@ -504,10 +707,8 @@ function DocumentRow({ document }: { document: UploadedDocument }) {
 function SUList({ items }: { items: SUItem[] }) {
   return (
     <section>
-      <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-        SU
-      </h3>
-      <ul className="grid gap-2 sm:grid-cols-2">
+      <SectionHeading icon={Wallet}>SU</SectionHeading>
+      <ul className="grid gap-1">
         {items.map((item) => (
           <li key={item.title}>
             <SUItemRow item={item} />
@@ -518,33 +719,86 @@ function SUList({ items }: { items: SUItem[] }) {
   );
 }
 
+function WhileWaitingList({
+  suItems,
+  activities,
+}: {
+  suItems: SUItem[];
+  activities: PhaseActivity[];
+}) {
+  // Fase 2-specifik: SU + info-tilmeldinger er begge ting brugeren KAN gøre
+  // mens de venter på ansøgningssvar — ikke ting der haster. Samles under én
+  // overskrift for at reducere antallet af konkurrerende sektioner og signalere
+  // hierarki (urgent ting er allerede vist højere oppe).
+  if (suItems.length === 0 && activities.length === 0) return null;
+  return (
+    <section>
+      <SectionHeading icon={Clock}>Mens du venter</SectionHeading>
+      <ul className="grid gap-1">
+        {suItems.map((item) => (
+          <li key={`su-${item.title}`}>
+            <SUItemRow item={item} />
+          </li>
+        ))}
+        {activities.map((activity) => (
+          <li key={`act-${activity.title}`}>
+            <ActivityRow activity={activity} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function SUItemRow({ item }: { item: SUItem }) {
+  // List-format som ActivityRow: done = grøn check + dæmpet titel. Urgent =
+  // lilla dot i samme slot-bredde + lilla titel/meta. Almindelig = tom slot
+  // så alle tre tilstande venstrejusterer ens (Gestalt: lighed). Bullet-
+  // separator binder meta til titlen så frist + handling læses som ét.
   const isDone = item.status === "done";
+  const isUrgent = item.isUrgent && !isDone;
   return (
     <a
       href="#"
       onClick={(e) => e.preventDefault()}
-      className={cn(
-        "group flex h-full items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
-        item.isUrgent && "border-l-2 border-l-[var(--color-lilla)]",
-      )}
+      className="group flex items-baseline gap-2.5 py-2 transition-colors focus-visible:outline-none focus-visible:text-[var(--color-lilla)]"
       aria-label={isDone ? `${item.title} (klaret)` : item.title}
     >
-      <div className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--color-foreground)]">
+      <span
+        className="flex h-4 w-4 shrink-0 translate-y-[2px] items-center justify-center"
+        aria-hidden
+      >
+        {isDone ? (
+          <Check
+            className="h-3.5 w-3.5 text-[var(--color-done-dim)]"
+            strokeWidth={3}
+          />
+        ) : isUrgent ? (
+          <span className="block h-2 w-2 rounded-full bg-[var(--color-lilla)]" />
+        ) : null}
+      </span>
+      <span
+        className={cn(
+          "text-sm transition-colors group-hover:text-[var(--color-lilla)]",
+          isDone
+            ? "text-[var(--color-muted-foreground)]"
+            : isUrgent
+            ? "font-medium text-[var(--color-lilla)]"
+            : "text-[var(--color-foreground)]",
+        )}
+      >
         {item.title}
-      </div>
+      </span>
       {item.meta ? (
         <span
           className={cn(
-            "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium",
-            isDone
-              ? "bg-[var(--color-done-soft)] text-[var(--color-done-dim)]"
-              : item.isUrgent
-              ? "bg-[var(--color-lilla-soft)] text-[var(--color-lilla)]"
-              : "font-normal text-[var(--color-muted-foreground)]",
+            "text-xs",
+            isUrgent
+              ? "font-medium text-[var(--color-lilla)]"
+              : "text-[var(--color-muted-foreground)]",
           )}
         >
-          {item.meta}
+          · {item.meta}
         </span>
       ) : null}
     </a>

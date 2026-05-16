@@ -1,4 +1,4 @@
-export type JourneyPhaseId = "interested" | "applied" | "accepted" | "student";
+export type JourneyPhaseId = "interested" | "applied" | "accepted";
 
 export type JourneyPhase = {
   id: JourneyPhaseId;
@@ -35,8 +35,6 @@ export type DraftApplication = {
   programTitle: string;
   /** Ratio som primary fact, fx "3 af 5" */
   ratio: string;
-  /** Qualifier som small caps note, fx "trin udfyldt" */
-  qualifier: string;
   progress: number;
 };
 
@@ -66,14 +64,12 @@ export const journeyPhases: JourneyPhase[] = [
   { id: "interested", shortLabel: "Interesse" },
   { id: "applied", shortLabel: "Ansøgning" },
   { id: "accepted", shortLabel: "Optagelse" },
-  { id: "student", shortLabel: "Studieliv" },
 ];
 
 export const phaseConfigs: Record<JourneyPhaseId, PhaseConfig> = {
   interested: { programsTitle: "Dine gemte uddannelser", programsTone: "default" },
   applied: { programsTitle: "Sendte ansøgninger", programsTone: "submitted" },
   accepted: { programsTitle: "Optaget på", programsTone: "accepted" },
-  student: { programsTitle: "Dine gemte uddannelser", programsTone: "default" },
 };
 
 export const savedPrograms: SavedProgram[] = [
@@ -118,12 +114,6 @@ export const savedPrograms: SavedProgram[] = [
     title: "Datavidenskab — bachelor",
     deadline: "Studiestart 1. september",
   },
-
-  {
-    phaseId: "student",
-    title: "Datavidenskab — 2. semester",
-    deadline: "Eksamen 9.–20. juni",
-  },
 ];
 
 export const draftApplications: DraftApplication[] = [
@@ -131,21 +121,18 @@ export const draftApplications: DraftApplication[] = [
     phaseId: "interested",
     programTitle: "Datavidenskab",
     ratio: "3 af 5",
-    qualifier: "trin udfyldt",
     progress: 60,
   },
   {
     phaseId: "interested",
     programTitle: "Cognitive Science",
     ratio: "1 af 5",
-    qualifier: "trin udfyldt",
     progress: 20,
   },
   {
     phaseId: "interested",
     programTitle: "Informationsvidenskab",
     ratio: "0 af 5",
-    qualifier: "trin udfyldt",
     progress: 0,
   },
 ];
@@ -163,26 +150,6 @@ export const phaseActivities: PhaseActivity[] = [
 
   { phaseId: "applied", title: "Søg studiebolig", status: "open" },
   { phaseId: "applied", title: "Kontakt optagelsen", status: "open" },
-
-  {
-    phaseId: "accepted",
-    title: "AU-login aktiveret",
-    meta: "Klar",
-    status: "done",
-  },
-  { phaseId: "accepted", title: "Tilmeld introforløb", status: "open" },
-  { phaseId: "accepted", title: "Bestil studiekort", status: "open" },
-  { phaseId: "accepted", title: "Info om studiestart", status: "open" },
-
-  {
-    phaseId: "student",
-    title: "Skema for 2. semester",
-    meta: "Synkroniseret",
-    status: "done",
-  },
-  { phaseId: "student", title: "Tilmeld eksamen", status: "open" },
-  { phaseId: "student", title: "Book grupperum", status: "open" },
-  { phaseId: "student", title: "Find pensum og litteratur", status: "open" },
 ];
 
 export const uploadedDocuments: UploadedDocument[] = [
