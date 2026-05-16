@@ -16,7 +16,7 @@ export type OverviewCard = {
   phaseId: JourneyPhaseId;
   title: string;
   system: string;
-  status?: string;
+  isPriority?: boolean;
 };
 
 export type SelfServiceAction = {
@@ -28,7 +28,6 @@ export type SelfServiceAction = {
 export type CommunicationMessage = {
   phaseId: JourneyPhaseId;
   title: string;
-  channel: string;
   relevance: string;
 };
 
@@ -43,17 +42,17 @@ export const nextSteps: NextStep[] = [
   {
     phaseId: "interested",
     title: "Find den uddannelse, der passer til dig",
-    ctaLabel: "Udforsk uddannelser",
+    ctaLabel: "Start uddannelsesguide",
   },
   {
     phaseId: "applied",
-    title: "Hold øje med din ansøgningsstatus",
+    title: "Hold øje med din ansøgning",
     ctaLabel: "Se ansøgningsstatus",
   },
   {
     phaseId: "accepted",
-    title: "Kom godt i gang før studiestart",
-    ctaLabel: "Se dine opstartsopgaver",
+    title: "Accepter pladsen og kom godt i gang",
+    ctaLabel: "Accepter studieplads",
   },
   {
     phaseId: "student",
@@ -63,62 +62,58 @@ export const nextSteps: NextStep[] = [
 ];
 
 export const overviewCards: OverviewCard[] = [
-  // Interesseret
-  { phaseId: "interested", title: "Sammenlign uddannelser", system: "Studieportalen", status: "Ofte brugt" },
-  { phaseId: "interested", title: "Tjek adgangskrav", system: "Studieportalen", status: "Vigtig" },
-  { phaseId: "interested", title: "Få besked om åbent hus", system: "AU-mail", status: "Valgfri" },
-  { phaseId: "interested", title: "Se ansøgningsfrister", system: "Studieportalen", status: "Vigtig" },
+  // Interesseret — fra at udforske til at være klar til at søge
+  { phaseId: "interested", title: "Gem og følg uddannelser", system: "Studieportalen", isPriority: true },
+  { phaseId: "interested", title: "Tjek adgangskrav", system: "Studieportalen", isPriority: true },
+  { phaseId: "interested", title: "Sammenlign uddannelser", system: "Studieportalen" },
+  { phaseId: "interested", title: "Tilmeld dig åbent hus", system: "Studieportalen" },
 
-  // Har søgt
-  { phaseId: "applied", title: "Se status på din ansøgning", system: "MitStudie", status: "Kræver login" },
-  { phaseId: "applied", title: "Upload manglende dokumentation", system: "MitStudie", status: "Vigtig" },
-  { phaseId: "applied", title: "Forstå hvad der sker nu", system: "Studieportalen", status: "Ny" },
-  { phaseId: "applied", title: "Kontakt optagelse", system: "AU Studievejledning", status: "Valgfri" },
+  // Har søgt — afvent svar, hold ansøgning opdateret, forbered livet ved siden af
+  { phaseId: "applied", title: "Se status på din ansøgning", system: "MitStudie", isPriority: true },
+  { phaseId: "applied", title: "Upload manglende dokumentation", system: "MitStudie", isPriority: true },
+  { phaseId: "applied", title: "Ret prioritering af uddannelser", system: "MitStudie" },
+  { phaseId: "applied", title: "Søg studiebolig", system: "Studieportalen" },
 
-  // Er optaget
-  { phaseId: "accepted", title: "Accepter studieplads", system: "MitStudie", status: "Vigtig" },
-  { phaseId: "accepted", title: "Aktivér AU-login", system: "AU IT", status: "Kræver login" },
-  { phaseId: "accepted", title: "Bestil studiekort", system: "MitStudie", status: "Ny" },
-  { phaseId: "accepted", title: "Find introprogram", system: "Studieportalen", status: "Ofte brugt" },
-  { phaseId: "accepted", title: "Tjek AU-mail", system: "AU-mail", status: "Kræver login" },
+  // Er optaget — formaliteter og forberedelse inden studiestart
+  { phaseId: "accepted", title: "Accepter studieplads", system: "MitStudie", isPriority: true },
+  { phaseId: "accepted", title: "Aktivér AU-login", system: "AU IT", isPriority: true },
+  { phaseId: "accepted", title: "Tilmeld dig introforløb", system: "Studieportalen" },
+  { phaseId: "accepted", title: "Bestil studiekort", system: "MitStudie" },
+  { phaseId: "accepted", title: "Find pensum til 1. semester", system: "AU Library" },
 
-  // Er studerende
-  { phaseId: "student", title: "Se dagens skema", system: "MitStudie", status: "Ofte brugt" },
-  { phaseId: "student", title: "Læs beskeder fra underviser", system: "Brightspace", status: "Ny" },
-  { phaseId: "student", title: "Tjek officielle beskeder", system: "AU-mail", status: "Kræver login" },
-  { phaseId: "student", title: "Tilmeld kurser", system: "STADS", status: "Vigtig" },
-  { phaseId: "student", title: "Find litteratur", system: "AU Library", status: "Ofte brugt" },
+  // Er studerende — dagligdag, kurser og eksamen
+  { phaseId: "student", title: "Se dagens skema", system: "MitStudie" },
+  { phaseId: "student", title: "Læs beskeder fra underviser", system: "Brightspace" },
+  { phaseId: "student", title: "Tilmeld dig eksamen", system: "STADS", isPriority: true },
+  { phaseId: "student", title: "Find pensum og litteratur", system: "AU Library" },
+  { phaseId: "student", title: "Se karakterer", system: "STADS" },
 ];
 
 export const selfServiceActions: SelfServiceAction[] = [
-  { phaseIds: ["interested"], title: "Find uddannelse", area: "Studieportalen" },
-  { phaseIds: ["interested"], title: "Se adgangskrav", area: "Studieportalen" },
-  { phaseIds: ["applied"], title: "Se ansøgningsstatus", area: "MitStudie" },
-  { phaseIds: ["applied"], title: "Upload dokumentation", area: "MitStudie" },
-  { phaseIds: ["accepted"], title: "Accepter studieplads", area: "MitStudie" },
-  { phaseIds: ["accepted"], title: "Aktivér AU-login", area: "AU IT" },
-  { phaseIds: ["accepted", "student"], title: "Bestil studiekort", area: "MitStudie" },
-  { phaseIds: ["student"], title: "Se skema", area: "MitStudie" },
-  { phaseIds: ["student"], title: "Tilmeld kursus", area: "STADS" },
-  { phaseIds: ["student"], title: "Se karakterer", area: "STADS" },
-  { phaseIds: ["student"], title: "Find karakterudskrift", area: "MitStudie" },
+  { phaseIds: ["interested"], title: "Få hjælp til at vælge studie", area: "AU Studievejledning" },
+  { phaseIds: ["interested"], title: "Besøg en forelæsning", area: "Studieportalen" },
+  { phaseIds: ["applied"], title: "Find SU-vejledning", area: "AU Studievejledning" },
+  { phaseIds: ["applied"], title: "Kontakt optagelsen", area: "AU Studievejledning" },
+  { phaseIds: ["accepted"], title: "Tjek AU-mail", area: "AU-mail" },
+  { phaseIds: ["accepted", "student"], title: "Book grupperum", area: "AU Library" },
+  { phaseIds: ["student"], title: "Tilmeld kurser næste semester", area: "STADS" },
   { phaseIds: ["interested", "applied", "accepted", "student"], title: "Kontakt support", area: "AU Support" },
 ];
 
 export const communicationMessages: CommunicationMessage[] = [
-  { phaseId: "interested", title: "Ansøgningsfristen nærmer sig", channel: "Studieportalen", relevance: "Vigtig" },
-  { phaseId: "interested", title: "Kom til åbent hus", channel: "AU-mail", relevance: "Denne uge" },
-  { phaseId: "interested", title: "Tjek adgangskrav før du søger", channel: "Studieportalen", relevance: "Nu" },
+  { phaseId: "interested", title: "Ansøgningsfrist for kvote 2 nærmer sig", relevance: "Vigtig" },
+  { phaseId: "interested", title: "Åbent hus 22. maj på Aarhus BSS", relevance: "Denne uge" },
+  { phaseId: "interested", title: "Tjek om du opfylder adgangskravene", relevance: "Nu" },
 
-  { phaseId: "applied", title: "Din ansøgning er modtaget", channel: "MitStudie", relevance: "Nu" },
-  { phaseId: "applied", title: "Du kan blive bedt om supplerende dokumentation", channel: "AU-mail", relevance: "Vigtig" },
-  { phaseId: "applied", title: "Hold øje med svarfrister", channel: "MitStudie", relevance: "Denne uge" },
+  { phaseId: "applied", title: "Din ansøgning er modtaget", relevance: "Nu" },
+  { phaseId: "applied", title: "Frist for motiveret ansøgning på fredag", relevance: "Vigtig" },
+  { phaseId: "applied", title: "Svar på din ansøgning den 26. juli", relevance: "Vigtig dato" },
 
-  { phaseId: "accepted", title: "Velkommen til AU", channel: "AU-mail", relevance: "Nu" },
-  { phaseId: "accepted", title: "Husk at acceptere studiepladsen", channel: "MitStudie", relevance: "Vigtig" },
-  { phaseId: "accepted", title: "Introprogrammet er klar", channel: "Studieportalen", relevance: "Før studiestart" },
+  { phaseId: "accepted", title: "Velkommen til AU", relevance: "Nu" },
+  { phaseId: "accepted", title: "Frist: accepter studieplads inden 5. august", relevance: "Vigtig" },
+  { phaseId: "accepted", title: "Introprogrammet er klar", relevance: "Før studiestart" },
 
-  { phaseId: "student", title: "Ny besked i Brightspace", channel: "Brightspace", relevance: "Nu" },
-  { phaseId: "student", title: "Kursustilmelding åbner snart", channel: "STADS", relevance: "Denne uge" },
-  { phaseId: "student", title: "Ny frist i dit studieoverblik", channel: "MitStudie", relevance: "Vigtig" },
+  { phaseId: "student", title: "Ny besked i Brightspace", relevance: "Nu" },
+  { phaseId: "student", title: "Kursustilmelding åbner 1. juni", relevance: "Vigtig dato" },
+  { phaseId: "student", title: "Eksamensplan er offentliggjort", relevance: "Denne uge" },
 ];

@@ -56,24 +56,29 @@ function actionsForPhase(phase: JourneyPhaseId): ActionTile[] {
     .filter((c) => c.phaseId === phase)
     .map((c) => ({
       title: c.title,
-      system: c.system ?? "Studieportalen",
-      isPriority:
-        !!c.status &&
-        (c.status.toLowerCase().includes("vigtig") ||
-          c.status.toLowerCase().includes("kræver handling")),
+      system: c.system,
+      isPriority: !!c.isPriority,
     }));
   const fromSelf: ActionTile[] = selfServiceActions
     .filter((a) => a.phaseIds.includes(phase))
     .map((a) => ({ title: a.title, system: a.area }));
 
   const seen = new Set<string>();
-  return [...fromOverview, ...fromSelf]
+  const deduped = [...fromOverview, ...fromSelf]
     .filter((t) => {
       if (seen.has(t.title)) return false;
       seen.add(t.title);
       return true;
     })
     .slice(0, 6);
+
+  let prioritySeen = false;
+  return deduped.map((t) => {
+    if (!t.isPriority) return t;
+    if (prioritySeen) return { ...t, isPriority: false };
+    prioritySeen = true;
+    return t;
+  });
 }
 
 export function AuDemoClient() {
@@ -103,29 +108,30 @@ export function AuDemoClient() {
         <div>
           <div className="rounded-3xl bg-[var(--color-muted)] p-4 md:p-5">
             <div className="mb-5">
-              <UserBadge name="Astrid Nielsen" phase={activePhase} />
+              <UserBadge name="Astrid Nielsen" />
             </div>
             <PhaseSideNav
               active={activePhase}
               activeIndex={activeIndex}
               onChange={setActivePhase}
-              step={activeNextStep}
               messages={messages}
             />
           </div>
         </div>
 
         <div>
-          <header className="mb-10 md:mb-12">
+          <header className="mb-6 md:mb-8">
             <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
               UX-prototype · Aarhus Universitet
             </span>
-            <h1 className="display mt-3 text-balance text-3xl leading-[1.05] md:text-5xl">
+            <h1 className="display mt-3 text-balance text-2xl leading-[1.1] md:text-3xl">
               Min AU-rejse
             </h1>
           </header>
 
-          <Section title="Du kan nu">
+          <NextStepCard step={activeNextStep} />
+
+          <section className="mt-6 md:mt-8">
             <ul className="grid gap-2 sm:grid-cols-2">
               {actions.map((action) => (
                 <li key={action.title}>
@@ -133,7 +139,7 @@ export function AuDemoClient() {
                 </li>
               ))}
             </ul>
-          </Section>
+          </section>
         </div>
       </div>
 
@@ -146,47 +152,14 @@ export function AuDemoClient() {
           hvordan en samlet studieportal kan binde rejsen fra interesse til
           studieliv sammen.
         </p>
-        <ul className="mt-5 grid gap-1.5 text-sm text-[var(--color-muted-foreground)]">
-          <li className="flex gap-2">
-            <span className="text-[var(--color-lilla)]" aria-hidden>·</span>
-            Én sammenhængende rejse i stedet for mange løse systemer.
-          </li>
-          <li className="flex gap-2">
-            <span className="text-[var(--color-lilla)]" aria-hidden>·</span>
-            Indhold og handlinger prioriteres efter fase.
-          </li>
-          <li className="flex gap-2">
-            <span className="text-[var(--color-lilla)]" aria-hidden>·</span>
-            Færre ord, tydeligere næste skridt.
-          </li>
-        </ul>
       </footer>
     </main>
   );
 }
 
-/* -------------------- Section wrapper -------------------- */
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="mb-12 md:mb-14">
-      <h2 className="mb-4 text-base font-semibold text-[var(--color-foreground)] md:text-lg">
-        {title}
-      </h2>
-      {children}
-    </section>
-  );
-}
-
 /* -------------------- User badge -------------------- */
 
-function UserBadge({ name, phase }: { name: string; phase: JourneyPhaseId }) {
+function UserBadge({ name }: { name: string }) {
   const initials = name
     .split(" ")
     .map((part) => part[0])
@@ -194,25 +167,14 @@ function UserBadge({ name, phase }: { name: string; phase: JourneyPhaseId }) {
     .join("")
     .toUpperCase();
 
-  const label = journeyPhases.find((p) => p.id === phase)?.label;
-
   return (
     <div className="flex items-center gap-2.5 rounded-full border border-[var(--color-border)] bg-[var(--color-card)] py-1 pl-1 pr-3">
-      <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-lilla)] text-[10px] font-semibold text-[var(--color-background)]">
+      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-lilla)] text-[10px] font-semibold text-[var(--color-background)]">
         {initials}
-        <span
-          className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-[var(--color-lime)] ring-2 ring-[var(--color-card)]"
-          aria-hidden
-        />
       </span>
-      <div className="flex flex-col leading-tight">
-        <span className="text-xs font-medium text-[var(--color-foreground)]">
-          {name}
-        </span>
-        <span className="text-[10px] uppercase tracking-wide text-[var(--color-muted-foreground)]">
-          {label}
-        </span>
-      </div>
+      <span className="text-xs font-medium text-[var(--color-foreground)]">
+        {name}
+      </span>
     </div>
   );
 }
@@ -223,13 +185,11 @@ function PhaseSideNav({
   active,
   activeIndex,
   onChange,
-  step,
   messages,
 }: {
   active: JourneyPhaseId;
   activeIndex: number;
   onChange: (id: JourneyPhaseId) => void;
-  step: (typeof nextSteps)[number];
   messages: CommunicationMessage[];
 }) {
   return (
@@ -255,8 +215,10 @@ function PhaseSideNav({
                 <span
                   className={cn(
                     "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-semibold tabular-nums transition-colors",
-                    isActive || isPast
+                    isActive
                       ? "border-[var(--color-lilla)] bg-[var(--color-lilla)] text-[var(--color-background)]"
+                      : isPast
+                      ? "border-[var(--color-lilla)] bg-[var(--color-background)] text-[var(--color-lilla-dim)]"
                       : "border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-muted-foreground)] group-hover:border-[var(--color-lilla)]/60",
                   )}
                 >
@@ -278,11 +240,10 @@ function PhaseSideNav({
                 </span>
               </button>
 
-              {isActive ? (
+              {isActive && messages.length > 0 ? (
                 // ml-[23px]: aligns the 2px border with the phase circle's center
                 // (button px-3 = 12px + half of h-6 circle = 12px, minus 1px for border width)
                 <div className="mb-3 ml-[23px] mt-1 border-l-2 border-[var(--color-lilla)]/40 pb-2 pl-6">
-                  <NextStepCard step={step} />
                   <MessagesList messages={messages} />
                 </div>
               ) : null}
@@ -296,7 +257,7 @@ function PhaseSideNav({
 
 function NextStepCard({ step }: { step: (typeof nextSteps)[number] }) {
   return (
-    <div className="rounded-2xl border border-[var(--color-lilla)]/30 bg-[var(--color-card)] p-5">
+    <div className="rounded-2xl border border-[var(--color-lilla)]/30 bg-[var(--color-card)] p-6 md:p-8">
       <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-lilla)]">
         Næste skridt
       </span>
@@ -318,30 +279,35 @@ function NextStepCard({ step }: { step: (typeof nextSteps)[number] }) {
 function MessagesList({ messages }: { messages: CommunicationMessage[] }) {
   if (messages.length === 0) return null;
   return (
-    <ul className="mt-5 space-y-3 pl-1">
+    <ul className="mt-2 space-y-2.5 pl-1">
       {messages.map((msg) => {
         const isUrgent =
           msg.relevance.toLowerCase() === "nu" ||
           msg.relevance.toLowerCase().includes("vigtig");
         return (
-          <li key={msg.title} className="flex gap-3">
-            <span
-              className={cn(
-                "mt-1.5 h-2 w-2 shrink-0 rounded-full",
-                isUrgent
-                  ? "bg-[var(--color-lilla)]"
-                  : "bg-[var(--color-border)]",
+          <li key={msg.title} className="flex items-start gap-3">
+            <span className="relative mt-1.5 flex h-2 w-2 shrink-0 items-center justify-center">
+              {isUrgent ? (
+                <>
+                  <span
+                    className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75"
+                    aria-hidden
+                  />
+                  <span
+                    className="relative inline-flex h-2 w-2 rounded-full bg-red-500"
+                    aria-label="Vigtig"
+                  />
+                </>
+              ) : (
+                <span
+                  className="inline-flex h-2 w-2 rounded-full bg-[var(--color-border)]"
+                  aria-hidden
+                />
               )}
-              aria-hidden
-            />
-            <div>
-              <div className="text-[11px] font-medium uppercase tracking-wide text-[var(--color-muted-foreground)]">
-                {msg.channel} · {msg.relevance}
-              </div>
-              <div className="text-sm text-[var(--color-foreground)]">
-                {msg.title}
-              </div>
-            </div>
+            </span>
+            <span className="text-sm leading-snug text-[var(--color-foreground)]">
+              {msg.title}
+            </span>
           </li>
         );
       })}
@@ -366,22 +332,21 @@ function Tile({
       href="#"
       onClick={(e) => e.preventDefault()}
       className="group relative flex h-full items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 pr-4 transition-all hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
-      aria-label={priority ? `${title} — ${system} (prioritet)` : `${title} — ${system}`}
+      aria-label={priority ? `${title} (vigtig)` : title}
     >
       <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-muted)] text-[var(--color-muted-foreground)] transition-colors group-hover:bg-[var(--color-lilla-soft)] group-hover:text-[var(--color-lilla-dim)]">
         <Icon className="h-4 w-4" aria-hidden />
         {priority ? (
-          <span
-            className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-[var(--color-lilla)] ring-2 ring-[var(--color-card)]"
-            aria-hidden
-          />
+          <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5" aria-hidden>
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-[var(--color-card)]" />
+          </span>
         ) : null}
       </span>
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium text-[var(--color-foreground)]">
           {title}
         </div>
-        <div className="text-xs text-[var(--color-muted-foreground)]">{system}</div>
       </div>
       <ArrowUpRight
         className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)] opacity-0 transition-opacity group-hover:opacity-100"
