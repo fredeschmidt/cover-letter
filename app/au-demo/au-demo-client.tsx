@@ -32,13 +32,6 @@ function daysUntil(targetISO: string, fromISO: string): number {
   return Math.round((target - from) / MS_PER_DAY);
 }
 
-function formatCountdown(days: number): string | undefined {
-  if (days < 0) return undefined;
-  if (days === 0) return "i dag";
-  if (days === 1) return "i morgen";
-  return `${days} dage`;
-}
-
 // Scoped palette: neutral light surface + blue brand. Inlined so it covers the
 // portfolio's aurora and overrides shared CSS variables only for this page.
 const auDemoTheme = {
@@ -96,8 +89,8 @@ export function AuDemoClient() {
           .map((d) => ({ title: d.programTitle, progress: d.progress }))
       : [];
 
-  const featuredCountdown = featuredProgram?.deadlineDate
-    ? formatCountdown(daysUntil(featuredProgram.deadlineDate, demoToday))
+  const featuredCountdownDays = featuredProgram?.deadlineDate
+    ? daysUntil(featuredProgram.deadlineDate, demoToday)
     : undefined;
 
   return (
@@ -150,7 +143,7 @@ export function AuDemoClient() {
               <NextStepCard
                 title={`Færdiggør ansøgning til ${featuredDraft.programTitle}`}
                 deadline={featuredProgram.deadline}
-                countdown={featuredCountdown}
+                countdownDays={featuredCountdownDays}
                 isUrgent={featuredProgram.isUrgent}
                 progress={featuredDraft.progress}
                 ctaLabel={`Fortsæt (${featuredDraft.progress}% udfyldt)`}
@@ -325,7 +318,7 @@ function StepsList({ steps }: { steps: PhaseStep[] }) {
 function NextStepCard({
   title,
   deadline,
-  countdown,
+  countdownDays,
   isUrgent,
   progress,
   ctaLabel,
@@ -333,45 +326,63 @@ function NextStepCard({
 }: {
   title: string;
   deadline?: string;
-  countdown?: string;
+  countdownDays?: number;
   isUrgent?: boolean;
   progress?: number;
   ctaLabel?: string;
   otherUrgentDrafts?: Array<{ title: string; progress: number }>;
 }) {
+  // Datafelter med "Frist " som prefix kolliderer med "DAGE TIL FRIST"-microlabelen
+  // når begge vises sammen — strip prefix kun i denne hero-kontekst.
+  const deadlineText = deadline?.replace(/^Frist\s+/i, "");
+  const hasCountdown = countdownDays !== undefined && countdownDays >= 0;
+  const countdownLabel = !hasCountdown
+    ? "Frist"
+    : countdownDays === 0
+    ? "Frist i dag"
+    : countdownDays === 1
+    ? "Dag til frist"
+    : "Dage til frist";
+
   return (
     <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-16px_rgba(15,23,42,0.12)] md:p-8">
       {deadline ? (
-        <span
-          className={cn(
-            "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
-            isUrgent
-              ? "bg-red-50 text-red-700 ring-1 ring-inset ring-red-200"
-              : "bg-[var(--color-muted)] text-[var(--color-muted-foreground)]",
-          )}
-        >
-          {deadline}
-          {countdown ? (
-            <>
-              <span
-                aria-hidden
-                className={cn(
-                  "mx-1.5",
-                  isUrgent ? "text-red-400" : "text-[var(--color-muted-foreground)]/50",
-                )}
-              >
-                ·
-              </span>
-              <span className="tabular-nums">{countdown}</span>
-            </>
+        <div className="flex items-end gap-5">
+          {hasCountdown && countdownDays !== 0 ? (
+            <div
+              className="text-5xl font-light leading-none tabular-nums text-[var(--color-lilla)] md:text-6xl"
+              aria-hidden
+            >
+              {countdownDays}
+            </div>
           ) : null}
-          {isUrgent ? <span className="sr-only"> — frist nærmer sig</span> : null}
-        </span>
+          <div className="pb-1">
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+              {isUrgent ? (
+                <span aria-hidden className="relative inline-flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-lilla)] opacity-60" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--color-lilla)]" />
+                </span>
+              ) : null}
+              <span>{countdownLabel}</span>
+            </div>
+            <div className="mt-1 text-sm font-medium text-[var(--color-foreground)]">
+              {deadlineText}
+            </div>
+            {isUrgent ? (
+              <span className="sr-only">
+                {hasCountdown
+                  ? ` — ${countdownDays} dage til frist`
+                  : " — frist nærmer sig"}
+              </span>
+            ) : null}
+          </div>
+        </div>
       ) : null}
       <h2
         className={cn(
           "display text-balance text-xl leading-[1.15] md:text-2xl",
-          deadline && "mt-3",
+          deadline && "mt-5",
         )}
       >
         {title}
