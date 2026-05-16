@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -24,6 +24,24 @@ import {
   type SavedProgram,
 } from "./data";
 
+// Scoped palette: neutral light surface + blue brand. Inlined so it covers the
+// portfolio's aurora and overrides shared CSS variables only for this page.
+const auDemoTheme = {
+  "--color-background": "#f5f7fb",
+  "--color-foreground": "#0b1220",
+  "--color-card": "#ffffff",
+  "--color-card-foreground": "#0b1220",
+  "--color-muted": "#eef1f6",
+  "--color-muted-foreground": "#5b6573",
+  "--color-border": "rgba(15, 23, 42, 0.08)",
+  "--color-lilla": "#2563eb",
+  "--color-lilla-dim": "#1d4ed8",
+  "--color-lilla-soft": "rgba(37, 99, 235, 0.10)",
+  "--color-lime": "#64748b",
+  "--color-lime-dim": "#475569",
+  "--color-lime-soft": "rgba(100, 116, 139, 0.14)",
+} as CSSProperties;
+
 export function AuDemoClient() {
   const [activePhase, setActivePhase] = useState<JourneyPhaseId>("interested");
 
@@ -36,63 +54,75 @@ export function AuDemoClient() {
   const drafts = draftApplications.filter((d) => d.phaseId === activePhase);
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 pb-24 pt-10 md:px-6 md:pt-14">
-      <div className="mb-10">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)]"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
-          Tilbage til portfolio
-        </Link>
-      </div>
+    <div style={auDemoTheme}>
+      {/* Solid surface that hides the portfolio aurora behind this page.
+          Inline position wins specificity over the global body-child rule. */}
+      <div
+        aria-hidden
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "var(--color-background)",
+        }}
+      />
+      <main className="relative mx-auto w-full max-w-5xl px-5 pb-24 pt-10 md:px-6 md:pt-14">
+        <div className="mb-10">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)]"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+            Tilbage til portfolio
+          </Link>
+        </div>
 
-      <div className="grid gap-10 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] lg:gap-16">
-        <div>
-          <div className="rounded-3xl bg-[var(--color-muted)] p-4 md:p-5">
-            <div className="mb-5">
-              <UserBadge name="Astrid Nielsen" />
+        <div className="grid gap-10 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] lg:gap-16">
+          <div>
+            <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-card)] p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.08)] md:p-5">
+              <div className="mb-5">
+                <UserBadge name="Astrid Nielsen" />
+              </div>
+              <PhaseSideNav
+                active={activePhase}
+                activeIndex={activeIndex}
+                onChange={setActivePhase}
+                steps={steps}
+              />
             </div>
-            <PhaseSideNav
-              active={activePhase}
-              activeIndex={activeIndex}
-              onChange={setActivePhase}
-              steps={steps}
-            />
+          </div>
+
+          <div>
+            <header className="mb-6 md:mb-8">
+              <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+                UX-prototype · Aarhus Universitet
+              </span>
+              <h1 className="display mt-3 text-balance text-2xl leading-[1.1] md:text-3xl">
+                Min AU-rejse
+              </h1>
+            </header>
+
+            {activeNextStep ? <NextStepCard step={activeNextStep} /> : null}
+
+            {programs.length > 0 ? <SavedProgramsList programs={programs} /> : null}
+
+            {drafts.length > 0 ? <DraftApplicationsList drafts={drafts} /> : null}
+
+            {activities.length > 0 ? <ActivitiesList activities={activities} /> : null}
           </div>
         </div>
 
-        <div>
-          <header className="mb-6 md:mb-8">
-            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-              UX-prototype · Aarhus Universitet
-            </span>
-            <h1 className="display mt-3 text-balance text-2xl leading-[1.1] md:text-3xl">
-              Min AU-rejse
-            </h1>
-          </header>
-
-          {activeNextStep ? <NextStepCard step={activeNextStep} /> : null}
-
-          {programs.length > 0 ? <SavedProgramsList programs={programs} /> : null}
-
-          {drafts.length > 0 ? <DraftApplicationsList drafts={drafts} /> : null}
-
-          {activities.length > 0 ? <ActivitiesList activities={activities} /> : null}
-        </div>
-      </div>
-
-      <footer className="mt-16 border-t border-[var(--color-border)] pt-8">
-        <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-          Om demoen
-        </h2>
-        <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-          En afgrænset UX-/frontend-case. Ikke et redesign, men et eksempel på
-          hvordan en samlet studieportal kan binde rejsen fra interesse til
-          studieliv sammen.
-        </p>
-      </footer>
-    </main>
+        <footer className="mt-16 border-t border-[var(--color-border)] pt-8">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+            Om demoen
+          </h2>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+            En afgrænset UX-/frontend-case. Ikke et redesign, men et eksempel på
+            hvordan en samlet studieportal kan binde rejsen fra interesse til
+            studieliv sammen.
+          </p>
+        </footer>
+      </main>
+    </div>
   );
 }
 
@@ -107,13 +137,20 @@ function UserBadge({ name }: { name: string }) {
     .toUpperCase();
 
   return (
-    <div className="flex items-center gap-2.5 rounded-full border border-[var(--color-border)] bg-[var(--color-card)] py-1 pl-1 pr-3">
-      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-lilla)] text-[10px] font-semibold text-[var(--color-background)]">
+    // Bevidst dæmpet: ingen pille-bg, gråtonet avatar, normal vægt på navn.
+    // Visuel hierarki: handlingen (aktivt step) skal fange blikket — ikke identiteten.
+    <div className="flex items-center gap-2.5 px-1">
+      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-muted)] text-[10px] font-semibold text-[var(--color-muted-foreground)]">
         {initials}
       </span>
-      <span className="text-xs font-medium text-[var(--color-foreground)]">
-        {name}
-      </span>
+      <div className="min-w-0 flex-1 leading-tight">
+        <div className="truncate text-[12px] font-medium text-[var(--color-foreground)]">
+          {name}
+        </div>
+        <div className="text-[10px] text-[var(--color-muted-foreground)]">
+          Logget ind
+        </div>
+      </div>
     </div>
   );
 }
@@ -138,56 +175,63 @@ function PhaseSideNav({
           const isActive = phase.id === active;
           const isPast = i < activeIndex;
           const hasStepsPanel = isActive && steps.length > 0;
+          const panelId = `au-demo-phase-${phase.id}-steps`;
           return (
             <li key={phase.id}>
-              <button
-                type="button"
-                aria-current={isActive ? "step" : undefined}
-                aria-expanded={isActive}
-                onClick={() => onChange(phase.id)}
+              <div
                 className={cn(
-                  "group flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
-                  hasStepsPanel ? "rounded-t-xl" : "rounded-xl",
-                  isActive
-                    ? "bg-[var(--color-lilla-soft)]"
-                    : "hover:bg-[var(--color-card)]",
+                  "rounded-xl",
+                  // Én bg-container for både fase-knap og substeps, så de to elementer
+                  // ikke producerer en synlig sub-pixel-grænse mellem ens translucent baggrunde.
+                  hasStepsPanel ? "bg-[var(--color-lilla-soft)]" : "",
                 )}
               >
-                <span
+                <button
+                  type="button"
+                  aria-current={isActive ? "step" : undefined}
+                  aria-expanded={isActive}
+                  aria-controls={hasStepsPanel ? panelId : undefined}
+                  onClick={() => onChange(phase.id)}
                   className={cn(
-                    "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-semibold tabular-nums transition-colors",
-                    isActive
-                      ? "border-[var(--color-lilla)] bg-[var(--color-lilla)] text-[var(--color-background)]"
-                      : isPast
-                      ? "border-[var(--color-lilla)] bg-[var(--color-background)] text-[var(--color-lilla-dim)]"
-                      : "border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-muted-foreground)] group-hover:border-[var(--color-lilla)]/60",
+                    "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
+                    isActive && !hasStepsPanel ? "bg-[var(--color-lilla-soft)]" : "",
+                    !isActive ? "hover:bg-[var(--color-muted)]" : "",
                   )}
                 >
-                  {isPast ? (
-                    <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
-                  ) : (
-                    i + 1
-                  )}
-                </span>
-                <span
-                  className={cn(
-                    "text-sm font-medium transition-colors md:text-[15px]",
-                    isActive
-                      ? "text-[var(--color-foreground)]"
-                      : "text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]",
-                  )}
-                >
-                  {phase.shortLabel}
-                </span>
-              </button>
+                  <span
+                    className={cn(
+                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-semibold tabular-nums transition-colors",
+                      isActive
+                        ? "border-[var(--color-lilla)] bg-[var(--color-lilla)] text-white"
+                        : isPast
+                        ? "border-[var(--color-lilla)] bg-[var(--color-muted)] text-[var(--color-lilla-dim)]"
+                        : "border-[var(--color-border)] bg-[var(--color-muted)] text-[var(--color-muted-foreground)] group-hover:border-[var(--color-lilla)]/60",
+                    )}
+                  >
+                    {isPast ? (
+                      <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
+                    ) : (
+                      i + 1
+                    )}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-sm font-medium transition-colors md:text-[15px]",
+                      isActive
+                        ? "text-[var(--color-foreground)]"
+                        : "text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]",
+                    )}
+                  >
+                    {phase.shortLabel}
+                  </span>
+                </button>
 
-              {hasStepsPanel ? (
-                <div className="rounded-b-xl bg-[var(--color-lilla-soft)] pb-3 pl-[42px] pr-3">
-                  {/* pl-[42px] indrykker bullets så de sidder lige under fase-titlen
-                      (button px-3 + h-6 cirkel + gap-3 ≈ 48px) */}
-                  <StepsList steps={steps} />
-                </div>
-              ) : null}
+                {hasStepsPanel ? (
+                  <div id={panelId} className="pb-3">
+                    <StepsList steps={steps} />
+                  </div>
+                ) : null}
+              </div>
             </li>
           );
         })}
@@ -208,7 +252,7 @@ function StepsList({ steps }: { steps: PhaseStep[] }) {
               href="#"
               onClick={(e) => e.preventDefault()}
               aria-current={isCurrent ? "page" : undefined}
-              className="group flex items-start gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-[var(--color-card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+              className="group flex items-start gap-2.5 rounded-lg px-3 py-1.5 transition-colors hover:bg-[var(--color-card)]/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
             >
               <span
                 className="mt-[3px] inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center"
@@ -249,7 +293,7 @@ function StepsList({ steps }: { steps: PhaseStep[] }) {
 
 function NextStepCard({ step }: { step: PhaseStep }) {
   return (
-    <div className="rounded-2xl border border-[var(--color-lilla)]/30 bg-[var(--color-card)] p-6 md:p-8">
+    <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-16px_rgba(15,23,42,0.12)] md:p-8">
       <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-lilla)]">
         Næste skridt
       </span>
@@ -260,7 +304,7 @@ function NextStepCard({ step }: { step: PhaseStep }) {
         <a
           href="#"
           onClick={(e) => e.preventDefault()}
-          className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--color-foreground)] px-4 py-2 text-sm font-medium text-[var(--color-background)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-card)]"
+          className="mt-5 inline-flex items-center gap-2 rounded-full bg-gradient-to-b from-[var(--color-lilla)] to-[var(--color-lilla-dim)] px-5 py-2.5 text-sm font-medium text-white shadow-[0_4px_12px_-2px_rgba(37,99,235,0.45)] transition-shadow hover:shadow-[0_6px_16px_-2px_rgba(37,99,235,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-card)]"
         >
           {step.ctaLabel}
           <ArrowUpRight className="h-4 w-4" aria-hidden />
