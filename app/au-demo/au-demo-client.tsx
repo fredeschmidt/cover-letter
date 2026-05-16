@@ -53,6 +53,21 @@ export function AuDemoClient() {
   const activities = phaseActivities.filter((a) => a.phaseId === activePhase);
   const drafts = draftApplications.filter((d) => d.phaseId === activePhase);
 
+  // Hero binder sig til mest akutte kladde i denne fase: kladder med en akut
+  // frist først, derefter dem tættest på færdiggørelse. Falder tilbage til
+  // faserens generiske "current"-step når der ingen kladde er (fx fase 2-4).
+  // NB: programmer og kladder kobles på titel-streng — demo-niveau. I et reelt
+  // produkt ville begge have et fælles programId.
+  const featuredDraft = [...drafts].sort((a, b) => {
+    const aUrgent = !!programs.find((p) => p.title === a.programTitle)?.isUrgent;
+    const bUrgent = !!programs.find((p) => p.title === b.programTitle)?.isUrgent;
+    if (aUrgent !== bUrgent) return aUrgent ? -1 : 1;
+    return b.progress - a.progress;
+  })[0];
+  const featuredProgram = featuredDraft
+    ? programs.find((p) => p.title === featuredDraft.programTitle)
+    : undefined;
+
   return (
     <div style={auDemoTheme}>
       {/* Solid surface that hides the portfolio aurora behind this page.
@@ -79,9 +94,6 @@ export function AuDemoClient() {
         <div className="grid gap-10 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] lg:gap-16">
           <div>
             <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-card)] p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.08)] md:p-5">
-              <div className="mb-5">
-                <UserBadge name="Astrid Nielsen" />
-              </div>
               <PhaseSideNav
                 active={activePhase}
                 activeIndex={activeIndex}
@@ -93,15 +105,29 @@ export function AuDemoClient() {
 
           <div>
             <header className="mb-6 md:mb-8">
-              <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-                UX-prototype · Aarhus Universitet
-              </span>
-              <h1 className="display mt-3 text-balance text-2xl leading-[1.1] md:text-3xl">
-                Min AU-rejse
+              <h1 className="display text-balance text-2xl leading-[1.1] md:text-3xl">
+                Velkommen tilbage, Astrid
               </h1>
+              <p className="mt-2 text-sm text-[var(--color-muted-foreground)]">
+                Fase {activeIndex + 1} af {journeyPhases.length} ·{" "}
+                {journeyPhases[activeIndex].shortLabel}
+              </p>
             </header>
 
-            {activeNextStep ? <NextStepCard step={activeNextStep} /> : null}
+            {featuredDraft && featuredProgram ? (
+              <NextStepCard
+                title={`Færdiggør ansøgning til ${featuredDraft.programTitle}`}
+                deadline={featuredProgram.deadline}
+                isUrgent={featuredProgram.isUrgent}
+                progress={featuredDraft.progress}
+                ctaLabel={`Fortsæt (${featuredDraft.progress}% udfyldt)`}
+              />
+            ) : activeNextStep ? (
+              <NextStepCard
+                title={activeNextStep.title}
+                ctaLabel={activeNextStep.ctaLabel}
+              />
+            ) : null}
 
             {programs.length > 0 ? <SavedProgramsList programs={programs} /> : null}
 
@@ -122,35 +148,6 @@ export function AuDemoClient() {
           </p>
         </footer>
       </main>
-    </div>
-  );
-}
-
-/* -------------------- User badge -------------------- */
-
-function UserBadge({ name }: { name: string }) {
-  const initials = name
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-
-  return (
-    // Bevidst dæmpet: ingen pille-bg, gråtonet avatar, normal vægt på navn.
-    // Visuel hierarki: handlingen (aktivt step) skal fange blikket — ikke identiteten.
-    <div className="flex items-center gap-2.5 px-1">
-      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-muted)] text-[10px] font-semibold text-[var(--color-muted-foreground)]">
-        {initials}
-      </span>
-      <div className="min-w-0 flex-1 leading-tight">
-        <div className="truncate text-[12px] font-medium text-[var(--color-foreground)]">
-          {name}
-        </div>
-        <div className="text-[10px] text-[var(--color-muted-foreground)]">
-          Logget ind
-        </div>
-      </div>
     </div>
   );
 }
@@ -291,22 +288,64 @@ function StepsList({ steps }: { steps: PhaseStep[] }) {
 
 /* -------------------- Næste skridt -------------------- */
 
-function NextStepCard({ step }: { step: PhaseStep }) {
+function NextStepCard({
+  title,
+  deadline,
+  isUrgent,
+  progress,
+  ctaLabel,
+}: {
+  title: string;
+  deadline?: string;
+  isUrgent?: boolean;
+  progress?: number;
+  ctaLabel?: string;
+}) {
   return (
     <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-16px_rgba(15,23,42,0.12)] md:p-8">
-      <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-lilla)]">
-        Næste skridt
-      </span>
-      <h2 className="display mt-2 text-balance text-xl leading-[1.15] md:text-2xl">
-        {step.title}
+      {deadline ? (
+        <span
+          className={cn(
+            "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
+            isUrgent
+              ? "bg-red-50 text-red-700 ring-1 ring-inset ring-red-200"
+              : "bg-[var(--color-muted)] text-[var(--color-muted-foreground)]",
+          )}
+        >
+          {deadline}
+          {isUrgent ? <span className="sr-only"> — frist nærmer sig</span> : null}
+        </span>
+      ) : null}
+      <h2
+        className={cn(
+          "display text-balance text-xl leading-[1.15] md:text-2xl",
+          deadline && "mt-3",
+        )}
+      >
+        {title}
       </h2>
-      {step.ctaLabel ? (
+      {progress !== undefined ? (
+        <div
+          className="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-[var(--color-muted)]"
+          role="progressbar"
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`Fremdrift på ${title}`}
+        >
+          <div
+            className="h-full rounded-full bg-[var(--color-lilla)] transition-all"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      ) : null}
+      {ctaLabel ? (
         <a
           href="#"
           onClick={(e) => e.preventDefault()}
           className="mt-5 inline-flex items-center gap-2 rounded-full bg-gradient-to-b from-[var(--color-lilla)] to-[var(--color-lilla-dim)] px-5 py-2.5 text-sm font-medium text-white shadow-[0_4px_12px_-2px_rgba(37,99,235,0.45)] transition-shadow hover:shadow-[0_6px_16px_-2px_rgba(37,99,235,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-card)]"
         >
-          {step.ctaLabel}
+          {ctaLabel}
           <ArrowUpRight className="h-4 w-4" aria-hidden />
         </a>
       ) : null}
@@ -320,7 +359,7 @@ function SavedProgramsList({ programs }: { programs: SavedProgram[] }) {
   return (
     <section className="mt-6 md:mt-8">
       <div className="mb-3 flex items-baseline justify-between">
-        <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+        <h3 className="text-sm font-medium text-[var(--color-foreground)]">
           Dine gemte uddannelser
         </h3>
         <span className="text-xs text-[var(--color-muted-foreground)]">
@@ -397,7 +436,7 @@ function DraftApplicationsList({ drafts }: { drafts: DraftApplication[] }) {
   return (
     <section className="mt-6 md:mt-8">
       <div className="mb-3 flex items-baseline justify-between">
-        <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+        <h3 className="text-sm font-medium text-[var(--color-foreground)]">
           Forberedte ansøgninger
         </h3>
         <span className="text-xs text-[var(--color-muted-foreground)]">
@@ -460,7 +499,7 @@ function DraftApplicationRow({ draft }: { draft: DraftApplication }) {
 function ActivitiesList({ activities }: { activities: PhaseActivity[] }) {
   return (
     <section className="mt-6 md:mt-8">
-      <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+      <h3 className="mb-3 text-sm font-medium text-[var(--color-foreground)]">
         Tilmeldinger og muligheder
       </h3>
       <ul className="grid gap-2 sm:grid-cols-2">
