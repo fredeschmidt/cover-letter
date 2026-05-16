@@ -89,7 +89,7 @@ export function AuDemoClient() {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 pb-24 pt-10 md:px-6 md:pt-14">
-      <div className="mb-10 flex items-center justify-between gap-3">
+      <div className="mb-10">
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)]"
@@ -97,30 +97,34 @@ export function AuDemoClient() {
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
           Tilbage til portfolio
         </Link>
-        <UserBadge name="Astrid Nielsen" phase={activePhase} />
       </div>
 
-      <header className="mb-10 md:mb-14">
-        <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-          UX-prototype · Aarhus Universitet
-        </span>
-        <h1 className="display mt-3 text-balance text-3xl leading-[1.05] md:text-5xl">
-          Min AU-rejse
-        </h1>
-      </header>
-
-      <div className="grid gap-12 md:grid-cols-[260px_1fr] lg:grid-cols-[300px_1fr] lg:gap-16">
+      <div className="grid gap-10 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] lg:gap-16">
         <div>
-          <PhaseSideNav
-            active={activePhase}
-            activeIndex={activeIndex}
-            onChange={setActivePhase}
-            step={activeNextStep}
-            messages={messages}
-          />
+          <div className="rounded-3xl bg-[var(--color-muted)] p-4 md:p-5">
+            <div className="mb-5">
+              <UserBadge name="Astrid Nielsen" phase={activePhase} />
+            </div>
+            <PhaseSideNav
+              active={activePhase}
+              activeIndex={activeIndex}
+              onChange={setActivePhase}
+              step={activeNextStep}
+              messages={messages}
+            />
+          </div>
         </div>
 
         <div>
+          <header className="mb-10 md:mb-12">
+            <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+              UX-prototype · Aarhus Universitet
+            </span>
+            <h1 className="display mt-3 text-balance text-3xl leading-[1.05] md:text-5xl">
+              Min AU-rejse
+            </h1>
+          </header>
+
           <Section title="Du kan nu">
             <ul className="grid gap-2 sm:grid-cols-2">
               {actions.map((action) => (
@@ -245,7 +249,7 @@ function PhaseSideNav({
                   "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
                   isActive
                     ? "bg-[var(--color-lilla-soft)]"
-                    : "hover:bg-[var(--color-muted)]",
+                    : "hover:bg-[var(--color-card)]",
                 )}
               >
                 <span
@@ -275,7 +279,9 @@ function PhaseSideNav({
               </button>
 
               {isActive ? (
-                <div className="mb-3 mt-3 pl-3 md:pl-4">
+                // ml-[23px]: aligns the 2px border with the phase circle's center
+                // (button px-3 = 12px + half of h-6 circle = 12px, minus 1px for border width)
+                <div className="mb-3 ml-[23px] mt-1 border-l-2 border-[var(--color-lilla)]/40 pb-2 pl-6">
                   <NextStepCard step={step} />
                   <MessagesList messages={messages} />
                 </div>
