@@ -1,96 +1,39 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
   ArrowUpRight,
-  BookOpen,
+  BookmarkCheck,
   Check,
   Compass,
-  GraduationCap,
-  Inbox,
-  KeyRound,
-  Library,
-  LifeBuoy,
-  Mail,
-  Sparkles,
-  Users,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
-  communicationMessages,
+  draftApplications,
   journeyPhases,
-  nextSteps,
-  overviewCards,
-  selfServiceActions,
-  type CommunicationMessage,
+  phaseActivities,
+  phaseSteps,
+  savedPrograms,
+  type DraftApplication,
   type JourneyPhaseId,
+  type PhaseActivity,
+  type PhaseStep,
+  type SavedProgram,
 } from "./data";
-
-type ActionTile = {
-  title: string;
-  system: string;
-  isPriority?: boolean;
-};
-
-const systemIcon: Record<string, React.ComponentType<{ className?: string }>> = {
-  MitStudie: GraduationCap,
-  Brightspace: Inbox,
-  STADS: BookOpen,
-  "AU-mail": Mail,
-  "AU Library": Library,
-  Studieportalen: Compass,
-  "AU IT": KeyRound,
-  "AU Support": LifeBuoy,
-  "AU Studievejledning": Users,
-};
-
-function iconForSystem(system?: string) {
-  if (!system) return Sparkles;
-  return systemIcon[system] ?? Sparkles;
-}
-
-function actionsForPhase(phase: JourneyPhaseId): ActionTile[] {
-  const fromOverview: ActionTile[] = overviewCards
-    .filter((c) => c.phaseId === phase)
-    .map((c) => ({
-      title: c.title,
-      system: c.system,
-      isPriority: !!c.isPriority,
-    }));
-  const fromSelf: ActionTile[] = selfServiceActions
-    .filter((a) => a.phaseIds.includes(phase))
-    .map((a) => ({ title: a.title, system: a.area }));
-
-  const seen = new Set<string>();
-  const deduped = [...fromOverview, ...fromSelf]
-    .filter((t) => {
-      if (seen.has(t.title)) return false;
-      seen.add(t.title);
-      return true;
-    })
-    .slice(0, 6);
-
-  let prioritySeen = false;
-  return deduped.map((t) => {
-    if (!t.isPriority) return t;
-    if (prioritySeen) return { ...t, isPriority: false };
-    prioritySeen = true;
-    return t;
-  });
-}
 
 export function AuDemoClient() {
   const [activePhase, setActivePhase] = useState<JourneyPhaseId>("interested");
 
   const activeIndex = journeyPhases.findIndex((p) => p.id === activePhase);
-  const activeNextStep = nextSteps.find((s) => s.phaseId === activePhase)!;
-  const actions = useMemo(() => actionsForPhase(activePhase), [activePhase]);
-  const messages = useMemo(
-    () => communicationMessages.filter((m) => m.phaseId === activePhase),
-    [activePhase],
-  );
+  const steps = phaseSteps.filter((s) => s.phaseId === activePhase);
+  const activeNextStep: PhaseStep | undefined =
+    steps.find((s) => s.status === "current") ?? steps[0];
+  const programs = savedPrograms.filter((p) => p.phaseId === activePhase);
+  const activities = phaseActivities.filter((a) => a.phaseId === activePhase);
+  const drafts = draftApplications.filter((d) => d.phaseId === activePhase);
 
   return (
     <main className="mx-auto w-full max-w-5xl px-5 pb-24 pt-10 md:px-6 md:pt-14">
@@ -114,7 +57,7 @@ export function AuDemoClient() {
               active={activePhase}
               activeIndex={activeIndex}
               onChange={setActivePhase}
-              messages={messages}
+              steps={steps}
             />
           </div>
         </div>
@@ -129,17 +72,13 @@ export function AuDemoClient() {
             </h1>
           </header>
 
-          <NextStepCard step={activeNextStep} />
+          {activeNextStep ? <NextStepCard step={activeNextStep} /> : null}
 
-          <section className="mt-6 md:mt-8">
-            <ul className="grid gap-2 sm:grid-cols-2">
-              {actions.map((action) => (
-                <li key={action.title}>
-                  <Tile title={action.title} system={action.system} priority={action.isPriority} />
-                </li>
-              ))}
-            </ul>
-          </section>
+          {programs.length > 0 ? <SavedProgramsList programs={programs} /> : null}
+
+          {drafts.length > 0 ? <DraftApplicationsList drafts={drafts} /> : null}
+
+          {activities.length > 0 ? <ActivitiesList activities={activities} /> : null}
         </div>
       </div>
 
@@ -185,12 +124,12 @@ function PhaseSideNav({
   active,
   activeIndex,
   onChange,
-  messages,
+  steps,
 }: {
   active: JourneyPhaseId;
   activeIndex: number;
   onChange: (id: JourneyPhaseId) => void;
-  messages: CommunicationMessage[];
+  steps: PhaseStep[];
 }) {
   return (
     <nav aria-label="Fase i AU-rejsen">
@@ -198,6 +137,7 @@ function PhaseSideNav({
         {journeyPhases.map((phase, i) => {
           const isActive = phase.id === active;
           const isPast = i < activeIndex;
+          const hasStepsPanel = isActive && steps.length > 0;
           return (
             <li key={phase.id}>
               <button
@@ -206,7 +146,8 @@ function PhaseSideNav({
                 aria-expanded={isActive}
                 onClick={() => onChange(phase.id)}
                 className={cn(
-                  "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
+                  "group flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
+                  hasStepsPanel ? "rounded-t-xl" : "rounded-xl",
                   isActive
                     ? "bg-[var(--color-lilla-soft)]"
                     : "hover:bg-[var(--color-card)]",
@@ -240,11 +181,11 @@ function PhaseSideNav({
                 </span>
               </button>
 
-              {isActive && messages.length > 0 ? (
-                // ml-[23px]: aligns the 2px border with the phase circle's center
-                // (button px-3 = 12px + half of h-6 circle = 12px, minus 1px for border width)
-                <div className="mb-3 ml-[23px] mt-1 border-l-2 border-[var(--color-lilla)]/40 pb-2 pl-6">
-                  <MessagesList messages={messages} />
+              {hasStepsPanel ? (
+                <div className="rounded-b-xl bg-[var(--color-lilla-soft)] pb-3 pl-[42px] pr-3">
+                  {/* pl-[42px] indrykker bullets så de sidder lige under fase-titlen
+                      (button px-3 + h-6 cirkel + gap-3 ≈ 48px) */}
+                  <StepsList steps={steps} />
                 </div>
               ) : null}
             </li>
@@ -255,7 +196,58 @@ function PhaseSideNav({
   );
 }
 
-function NextStepCard({ step }: { step: (typeof nextSteps)[number] }) {
+function StepsList({ steps }: { steps: PhaseStep[] }) {
+  return (
+    <ul className="mt-1 space-y-0.5">
+      {steps.map((step) => {
+        const isCurrent = step.status === "current";
+        const isDone = step.status === "done";
+        return (
+          <li key={step.title}>
+            <a
+              href="#"
+              onClick={(e) => e.preventDefault()}
+              aria-current={isCurrent ? "page" : undefined}
+              className="group flex items-start gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-[var(--color-card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+            >
+              <span
+                className="mt-[3px] inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center"
+                aria-hidden
+              >
+                {isDone ? (
+                  <Check
+                    className="h-3.5 w-3.5 text-[var(--color-lilla)]/70"
+                    strokeWidth={3}
+                  />
+                ) : isCurrent ? (
+                  <span className="h-2 w-2 rounded-full bg-[var(--color-lilla)] ring-2 ring-[var(--color-lilla)]/25" />
+                ) : (
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-muted-foreground)]/40 transition-colors group-hover:bg-[var(--color-lilla)]" />
+                )}
+              </span>
+              <span
+                className={cn(
+                  "text-sm leading-snug transition-colors",
+                  isCurrent && "font-medium text-[var(--color-foreground)]",
+                  isDone && "text-[var(--color-muted-foreground)]/60 line-through decoration-[var(--color-muted-foreground)]/30",
+                  !isCurrent &&
+                    !isDone &&
+                    "text-[var(--color-muted-foreground)] group-hover:text-[var(--color-foreground)]",
+                )}
+              >
+                {step.title}
+              </span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+/* -------------------- Næste skridt -------------------- */
+
+function NextStepCard({ step }: { step: PhaseStep }) {
   return (
     <div className="rounded-2xl border border-[var(--color-lilla)]/30 bg-[var(--color-card)] p-6 md:p-8">
       <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-lilla)]">
@@ -264,79 +256,50 @@ function NextStepCard({ step }: { step: (typeof nextSteps)[number] }) {
       <h2 className="display mt-2 text-balance text-xl leading-[1.15] md:text-2xl">
         {step.title}
       </h2>
-      <a
-        href="#"
-        onClick={(e) => e.preventDefault()}
-        className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--color-foreground)] px-4 py-2 text-sm font-medium text-[var(--color-background)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-card)]"
-      >
-        {step.ctaLabel}
-        <ArrowUpRight className="h-4 w-4" aria-hidden />
-      </a>
+      {step.ctaLabel ? (
+        <a
+          href="#"
+          onClick={(e) => e.preventDefault()}
+          className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--color-foreground)] px-4 py-2 text-sm font-medium text-[var(--color-background)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-card)]"
+        >
+          {step.ctaLabel}
+          <ArrowUpRight className="h-4 w-4" aria-hidden />
+        </a>
+      ) : null}
     </div>
   );
 }
 
-function MessagesList({ messages }: { messages: CommunicationMessage[] }) {
-  if (messages.length === 0) return null;
+/* -------------------- Gemte uddannelser -------------------- */
+
+function SavedProgramsList({ programs }: { programs: SavedProgram[] }) {
   return (
-    <ul className="mt-2 space-y-2.5 pl-1">
-      {messages.map((msg) => {
-        const isUrgent =
-          msg.relevance.toLowerCase() === "nu" ||
-          msg.relevance.toLowerCase().includes("vigtig");
-        return (
-          <li key={msg.title} className="flex items-start gap-3">
-            <span className="relative mt-1.5 flex h-2 w-2 shrink-0 items-center justify-center">
-              {isUrgent ? (
-                <>
-                  <span
-                    className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75"
-                    aria-hidden
-                  />
-                  <span
-                    className="relative inline-flex h-2 w-2 rounded-full bg-red-500"
-                    aria-label="Vigtig"
-                  />
-                </>
-              ) : (
-                <span
-                  className="inline-flex h-2 w-2 rounded-full bg-[var(--color-border)]"
-                  aria-hidden
-                />
-              )}
-            </span>
-            <span className="text-sm leading-snug text-[var(--color-foreground)]">
-              {msg.title}
-            </span>
+    <section className="mt-6 md:mt-8">
+      <div className="mb-3 flex items-baseline justify-between">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+          Dine gemte uddannelser
+        </h3>
+        <span className="text-xs text-[var(--color-muted-foreground)]">
+          {programs.length} {programs.length === 1 ? "gemt" : "gemte"}
+        </span>
+      </div>
+      <ul className="grid gap-2">
+        {programs.map((program) => (
+          <li key={program.title}>
+            <SavedProgramRow program={program} />
           </li>
-        );
-      })}
-    </ul>
+        ))}
+      </ul>
+    </section>
   );
 }
 
-/* -------------------- Tile (action / result) -------------------- */
-
-function Tile({
-  title,
-  system,
-  priority,
-}: {
-  title: string;
-  system: string;
-  priority?: boolean;
-}) {
-  const Icon = iconForSystem(system);
+function SavedProgramRow({ program }: { program: SavedProgram }) {
   return (
-    <a
-      href="#"
-      onClick={(e) => e.preventDefault()}
-      className="group relative flex h-full items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 pr-4 transition-all hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
-      aria-label={priority ? `${title} (vigtig)` : title}
-    >
+    <div className="group relative flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 pr-3 transition-colors hover:border-[var(--color-lilla)]/50 focus-within:border-[var(--color-lilla)]/50">
       <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-muted)] text-[var(--color-muted-foreground)] transition-colors group-hover:bg-[var(--color-lilla-soft)] group-hover:text-[var(--color-lilla-dim)]">
-        <Icon className="h-4 w-4" aria-hidden />
-        {priority ? (
+        <BookmarkCheck className="h-4 w-4" aria-hidden />
+        {program.isUrgent ? (
           <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5" aria-hidden>
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-[var(--color-card)]" />
@@ -344,8 +307,100 @@ function Tile({
         ) : null}
       </span>
       <div className="min-w-0 flex-1">
+        {/* before:absolute gør hele rækken klikbar til program-detaljer,
+            mens "Tjek adgangskrav" sidder ovenpå med z-10 som separat link */}
+        <a
+          href="#"
+          onClick={(e) => e.preventDefault()}
+          aria-label={
+            program.isUrgent
+              ? `${program.title} (${program.deadline}) — frist nærmer sig`
+              : `${program.title} (${program.deadline})`
+          }
+          className="block before:absolute before:inset-0 before:rounded-2xl focus-visible:outline-none focus-visible:before:ring-2 focus-visible:before:ring-[var(--color-lilla)]"
+        >
+          <div className="truncate text-sm font-medium text-[var(--color-foreground)]">
+            {program.title}
+          </div>
+          <div
+            className={cn(
+              "truncate text-xs",
+              program.isUrgent
+                ? "font-medium text-red-600"
+                : "text-[var(--color-muted-foreground)]",
+            )}
+          >
+            {program.deadline}
+          </div>
+        </a>
+      </div>
+      <a
+        href="#"
+        onClick={(e) => e.preventDefault()}
+        aria-label={`Tjek adgangskrav for ${program.title}`}
+        className="relative z-10 inline-flex shrink-0 items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-1.5 text-xs font-medium text-[var(--color-muted-foreground)] transition-colors hover:border-[var(--color-lilla)]/50 hover:text-[var(--color-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+      >
+        Tjek adgangskrav
+        <ArrowUpRight className="h-3 w-3" aria-hidden />
+      </a>
+    </div>
+  );
+}
+
+/* -------------------- Forberedte ansøgninger -------------------- */
+
+function DraftApplicationsList({ drafts }: { drafts: DraftApplication[] }) {
+  return (
+    <section className="mt-6 md:mt-8">
+      <div className="mb-3 flex items-baseline justify-between">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+          Forberedte ansøgninger
+        </h3>
+        <span className="text-xs text-[var(--color-muted-foreground)]">
+          {drafts.length} {drafts.length === 1 ? "kladde" : "kladder"}
+        </span>
+      </div>
+      <ul className="grid gap-2">
+        {drafts.map((draft) => (
+          <li key={draft.programTitle}>
+            <DraftApplicationRow draft={draft} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function DraftApplicationRow({ draft }: { draft: DraftApplication }) {
+  return (
+    <a
+      href="#"
+      onClick={(e) => e.preventDefault()}
+      aria-label={`Fortsæt motiveret ansøgning til ${draft.programTitle} (${draft.progress}% udfyldt)`}
+      className="group flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 pr-4 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+    >
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-muted)] text-[var(--color-muted-foreground)] transition-colors group-hover:bg-[var(--color-lilla-soft)] group-hover:text-[var(--color-lilla-dim)]">
+        <FileText className="h-4 w-4" aria-hidden />
+      </span>
+      <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium text-[var(--color-foreground)]">
-          {title}
+          {draft.programTitle}
+        </div>
+        <div className="truncate text-xs text-[var(--color-muted-foreground)]">
+          {draft.description}
+        </div>
+        <div
+          className="mt-2 h-1 w-full overflow-hidden rounded-full bg-[var(--color-muted)]"
+          role="progressbar"
+          aria-valuenow={draft.progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`${draft.programTitle} kladde`}
+        >
+          <div
+            className="h-full rounded-full bg-[var(--color-lilla)] transition-all"
+            style={{ width: `${draft.progress}%` }}
+          />
         </div>
       </div>
       <ArrowUpRight
@@ -356,3 +411,71 @@ function Tile({
   );
 }
 
+/* -------------------- Tilmeldinger & muligheder -------------------- */
+
+function ActivitiesList({ activities }: { activities: PhaseActivity[] }) {
+  return (
+    <section className="mt-6 md:mt-8">
+      <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
+        Tilmeldinger og muligheder
+      </h3>
+      <ul className="grid gap-2 sm:grid-cols-2">
+        {activities.map((activity) => (
+          <li key={activity.title}>
+            <ActivityRow activity={activity} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function ActivityRow({ activity }: { activity: PhaseActivity }) {
+  const isDone = activity.status === "done";
+  return (
+    <a
+      href="#"
+      onClick={(e) => e.preventDefault()}
+      className="group relative flex h-full items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 pr-4 transition-colors hover:border-[var(--color-lilla)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+      aria-label={isDone ? `${activity.title} (tilmeldt)` : activity.title}
+    >
+      <span
+        className={cn(
+          "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors",
+          isDone
+            ? "bg-[var(--color-lime-soft)] text-[var(--color-lime-dim)]"
+            : "bg-[var(--color-muted)] text-[var(--color-muted-foreground)] group-hover:bg-[var(--color-lilla-soft)] group-hover:text-[var(--color-lilla-dim)]",
+        )}
+      >
+        {isDone ? (
+          <Check className="h-4 w-4" strokeWidth={3} aria-hidden />
+        ) : (
+          <Compass className="h-4 w-4" aria-hidden />
+        )}
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-sm font-medium text-[var(--color-foreground)]">
+          {activity.title}
+        </div>
+        {activity.meta ? (
+          <div
+            className={cn(
+              "truncate text-xs",
+              isDone
+                ? "font-medium text-[var(--color-lime-dim)]"
+                : "text-[var(--color-muted-foreground)]",
+            )}
+          >
+            {activity.meta}
+          </div>
+        ) : null}
+      </div>
+      {!isDone ? (
+        <ArrowUpRight
+          className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)] opacity-0 transition-opacity group-hover:opacity-100"
+          aria-hidden
+        />
+      ) : null}
+    </a>
+  );
+}
