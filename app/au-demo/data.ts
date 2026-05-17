@@ -65,7 +65,7 @@ export const journeyPhases: JourneyPhase[] = [
 ];
 
 export const phaseConfigs: Record<JourneyPhaseId, PhaseConfig> = {
-  interested: { programsTitle: "Dine gemte uddannelser", programsTone: "default" },
+  interested: { programsTitle: "Dine ansøgninger", programsTone: "default" },
   applied: { programsTitle: "Sendte ansøgninger", programsTone: "submitted" },
   accepted: { programsTitle: "Optaget på", programsTone: "accepted" },
 };
@@ -139,6 +139,7 @@ export const phaseActivities: PhaseActivity[] = [
     meta: "Du er tilmeldt",
     status: "done",
   },
+  { phaseId: "interested", title: "Åbent hus 12. juni på Arts", status: "open" },
   { phaseId: "interested", title: "Besøg en forelæsning", status: "open" },
   { phaseId: "interested", title: "Få hjælp til at vælge studie", status: "open" },
   { phaseId: "interested", title: "Sammenlign uddannelser", status: "open" },
@@ -152,12 +153,6 @@ export const uploadedDocuments: UploadedDocument[] = [
     phaseId: "applied",
     title: "Eksamensbevis",
     meta: "Uploadet 12. marts",
-    status: "verified",
-  },
-  {
-    phaseId: "applied",
-    title: "Motiveret ansøgning",
-    meta: "Uploadet 14. marts",
     status: "verified",
   },
   {
