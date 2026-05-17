@@ -103,7 +103,7 @@ export function AuDemoClient() {
 
         <div className="grid gap-10 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] lg:gap-16">
           <div>
-            <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-card)] p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.08)] md:p-5">
+            <div className="md:rounded-3xl md:border md:border-[var(--color-border)] md:bg-[var(--color-card)] md:p-5 md:shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.08)]">
               <PhaseSideNav
                 active={activePhase}
                 activeIndex={activeIndex}
@@ -275,18 +275,18 @@ function PhaseSideNav({
 }) {
   return (
     <nav aria-label="Fase i AU-rejsen">
-      <ol className="flex flex-col gap-1">
+      <ol className="flex flex-row justify-between gap-1 md:flex-col md:justify-start">
         {journeyPhases.map((phase, i) => {
           const isActive = phase.id === active;
           const isPast = i < activeIndex;
           return (
-            <li key={phase.id}>
+            <li key={phase.id} className="flex-1 md:flex-none">
               <button
                 type="button"
                 aria-current={isActive ? "step" : undefined}
                 onClick={() => onChange(phase.id)}
                 className={cn(
-                  "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]",
+                  "group flex w-full flex-col items-center gap-1.5 rounded-xl px-1 py-2 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:flex-row md:gap-3 md:px-3 md:py-2.5 md:text-left",
                   !isActive ? "hover:bg-[var(--color-muted)]" : "",
                 )}
               >
