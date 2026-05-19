@@ -17,9 +17,9 @@ export type SavedProgram = {
   submittedDate?: string;
 };
 
-// Demoens "i dag" — sat så fase 1's marts-frist ligger 23 dage ude og føles akut.
+// Demoens "i dag" — sat så fase 1's marts-frist ligger 7 dage ude og føles akut.
 // Reel dato kunne hentes fra Date.now(), men en fast demoToday gør prototypen stabil.
-export const demoToday = "2026-02-20" as const;
+export const demoToday = "2026-03-08" as const;
 
 export type PhaseActivity = {
   phaseId: JourneyPhaseId;

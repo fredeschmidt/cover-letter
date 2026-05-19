@@ -18,6 +18,7 @@ import {
   FilePen,
   GraduationCap,
   HeartPulse,
+  Lightbulb,
   Scale,
   Search,
   Send,
@@ -95,15 +96,46 @@ export function AuDemoClient() {
         }}
       />
       <main className="relative mx-auto w-full max-w-5xl px-5 pb-24 pt-10 md:px-6 md:pt-14">
-        <div className="mb-10">
-          <h1 className="display text-balance text-2xl leading-[1.1] md:text-3xl">
-            Velkommen tilbage, Astrid
+        {/* Demo-meta: portfolio-konteksten lever uden for personaen "Astrid",
+            så den får sit eget visuelle lag øverst — let blå tint + lilla
+            border-tone trækker den ud af det neutrale indhold uden at
+            konkurrere med interaktive flader længere nede. Forklarer formål
+            + brugsanvisning (klik dig gennem fase-menuen) så recruiter-
+            læseren ved hvad de skal gøre med siden. */}
+        <aside
+          aria-label="Om demoen"
+          className="mb-8 rounded-2xl border border-[var(--color-lilla)]/20 bg-[var(--color-lilla-soft)] px-4 py-4 md:px-5 md:py-4"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-lilla)]">
+            Om demoen
+          </p>
+          <p className="mt-2.5 text-sm leading-snug text-[var(--color-foreground)]">
+            En UX-case, der binder hele studierejsen sammen i én portal.
+          </p>
+          <p className="mt-2 text-sm leading-snug text-[var(--color-foreground)]">
+            Klik dig gennem de tre faser i menuen til venstre for at se, hvordan indholdet vil skifte undervejs i forløbet.
+          </p>
+          {/* Scope-disclaimer: nedtonet til 12px muted så det læses som
+              caveat, ikke som hovedbudskab — markerer at det visuelle
+              udtryk ikke er færdigskåret i denne omgang. */}
+          <p className="mt-2.5 text-xs leading-snug text-[var(--color-muted-foreground)]">
+            Fokus er UX — ikke visuelt design.
+          </p>
+        </aside>
+
+        <div className="mb-12">
+          <h1 className="display text-balance text-3xl font-medium leading-[1.1] md:text-4xl">
+            {activePhase === "interested"
+              ? "Velkommen Astrid"
+              : activePhase === "accepted"
+              ? "Tillykke Astrid"
+              : "Velkommen tilbage, Astrid"}
           </h1>
         </div>
 
         <div className="grid gap-10 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] lg:gap-16">
-          <div>
-            <div className="md:rounded-3xl md:border md:border-[var(--color-border)] md:bg-[var(--color-card)] md:p-5 md:shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.08)]">
+          <div className="md:sticky md:top-6 md:self-start">
+            <div className="md:p-2">
               <PhaseSideNav
                 active={activePhase}
                 activeIndex={activeIndex}
@@ -112,7 +144,11 @@ export function AuDemoClient() {
             </div>
           </div>
 
-          <div>
+          {/* md:pt-5 flugter SectionHeading'ens tekstmidte med første
+              nav-knaps tekstmidte: knappen har 8px wrapper-padding + 10px
+              egen py + ~12px halv-cirkel = ~30px til midten, overskriften
+              til højre lå før klods op ad toppen. */}
+          <div className="md:pt-5">
             {/* AnimatePresence + key på phase: hver fase mounter på ny så
                 fase-skiftet bliver til en synlig transformation i stedet for
                 et abrupt swap. mode="wait" sikrer at exit-animationen er
@@ -160,17 +196,9 @@ export function AuDemoClient() {
         </div>
 
         <footer className="mt-16 border-t border-[var(--color-border)] pt-8">
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-muted-foreground)]">
-            Om demoen
-          </h2>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-            En afgrænset UX-/frontend-case. Ikke et redesign, men et eksempel på
-            hvordan en samlet studieportal kan binde rejsen fra interesse til
-            studieliv sammen.
-          </p>
           <Link
             href="/"
-            className="mt-6 inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)]"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)]"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
             Tilbage til portfolio
@@ -600,7 +628,7 @@ function SubmittedProgramRow({ program }: { program: SavedProgram }) {
 function ActivitiesList({ activities }: { activities: PhaseActivity[] }) {
   return (
     <section className="border-t border-[var(--color-border)] pt-8 md:pt-10">
-      <SectionHeading icon={Sparkles}>Hvad kan du gøre nu?</SectionHeading>
+      <SectionHeading icon={Lightbulb}>Hvad kan du gøre nu?</SectionHeading>
       <ul className="grid gap-1">
         {activities.map((activity) => (
           <li key={activity.title}>
