@@ -13,7 +13,7 @@ const caseTexts = {
     "Som projektleder for TV2 Østjyllands nye forside byggede jeg bro mellem forretningens mål og brugernes behov. Jeg satte processen i gang med workshops og brugertest, og vi landede på et one-column layout med fokus på reels, som blev det første af sin slags i et dansk nyhedsmedie. Valget var underbygget af data fra 100.000+ daglige besøgende og tog afsæt i den måde, brugerne allerede navigerer på fra sociale medier.",
   valgdag:
     "Til kommunalvalget 2025 satte jeg de tekniske forberedelser i gang 8 måneder før valgdagen, så husets behov til CMS, valgmoduler og den visuelle oplevelse blev hørt og omsat i god tid. Jeg faciliterede møder, holdt overblikket og gjorde det tydeligt, hvad der teknisk kunne lade sig gøre. Med erfaring fra sidste valg og forståelse for både forretning og brugere hjalp jeg med at prioritere de idéer, der skabte mest værdi. Samtidig kommunikerede jeg løbende om fremdrift og forberedte nødplaner, så huset kunne have ro i maven efter sidste valgs trafiknedbrud. Da en ekstern Cloudflare-fejl ramte på valgdagen, kunne vi aktivere nødplanen roligt, informere hurtigt og lande dagen med overblik og overskud.",
-} as const;
+};
 
 /**
  * Case 1 — Bindeled · "Vendepunktet"
@@ -77,23 +77,28 @@ function CaseBindeled() {
             transition={{ ...pair, delay: 0.05 }}
           />
 
-          {/* Start-label: står frit over kurvens zigzag-zone */}
-          <motion.text
-            x={startX}
-            y={startY - 10}
-            fill={muted}
-            style={{
-              fontSize: "7px",
-              letterSpacing: "0.2em",
-              fontWeight: 500,
-            }}
+          {/* Start-label: står frit over kurvens zigzag-zone.
+              NB: text skrumper på sm:+ fordi SVG'et skaleres op via viewBox — mindre font-px
+              giver samme visuelle størrelse på bredere skærme. Gælder også de øvrige <text>. */}
+          <motion.g
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ ...pair, delay: 0.15 }}
           >
-            FEJL, LAV TILLID I HUSET
-          </motion.text>
+            <text
+              x={startX}
+              y={startY - 10}
+              fill={muted}
+              className="text-[10px] sm:text-[7px]"
+              style={{
+                letterSpacing: "0.2em",
+                fontWeight: 500,
+              }}
+            >
+              FEJL, LAV TILLID I HUSET
+            </text>
+          </motion.g>
 
           {/* Markør: lille vertikal tick + label "JEG TRÅDTE IND" */}
           <motion.g
@@ -116,11 +121,10 @@ function CaseBindeled() {
               x={markerX + 6}
               y={markerY - 10}
               fill={stroke}
+              className="text-[10.5px] uppercase sm:text-[7.5px]"
               style={{
-                fontSize: "7.5px",
                 letterSpacing: "0.22em",
                 fontWeight: 600,
-                textTransform: "uppercase",
               }}
             >
               Jeg trådte ind
@@ -141,23 +145,26 @@ function CaseBindeled() {
           />
 
           {/* Slut-label: forankret ved slut-prikken, bund-højre */}
-          <motion.text
-            x={endX}
-            y={endY + 16}
-            textAnchor="end"
-            fill={stroke}
-            style={{
-              fontSize: "7px",
-              letterSpacing: "0.2em",
-              fontWeight: 600,
-            }}
+          <motion.g
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ ...pair, delay: 1.65 }}
           >
-            RO · OPLYST HUS
-          </motion.text>
+            <text
+              x={endX}
+              y={endY + 16}
+              textAnchor="end"
+              fill={stroke}
+              className="text-[10px] sm:text-[7px]"
+              style={{
+                letterSpacing: "0.2em",
+                fontWeight: 600,
+              }}
+            >
+              RO · OPLYST HUS
+            </text>
+          </motion.g>
         </svg>
       </div>
     </div>
@@ -186,14 +193,14 @@ function CaseForside() {
 
   return (
     <div className="mt-2">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-[200px_170px] md:justify-center md:gap-10">
+      <div className="grid grid-cols-1 justify-items-center gap-6 md:grid-cols-[200px_170px] md:justify-center md:gap-10">
         {/* FØR — traditionelt 3-col grid (referencepunkt) */}
         <motion.div
           initial={{ opacity: 0, x: -6 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ ...pair, delay: 0.1 }}
-          className="md:w-[200px]"
+          className="w-[200px]"
         >
           <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted-foreground)]">
             Før · Traditionelt grid
@@ -201,43 +208,25 @@ function CaseForside() {
           <div className="space-y-1" aria-hidden>
             {/* Øverst: stor hero til venstre + to mindre stablet til højre */}
             <div className="grid grid-cols-3 gap-1">
-              <div
-                className="col-span-2 aspect-[3/2] rounded-[2px] bg-[var(--color-muted)]"
-                style={{ opacity: 0.55 }}
-              />
+              <div className="col-span-2 aspect-[3/2] rounded-[2px] bg-[var(--color-muted)] opacity-55" />
               <div className="flex flex-col gap-1">
-                <div
-                  className="aspect-[3/2] rounded-[2px] bg-[var(--color-muted)]"
-                  style={{ opacity: 0.5 }}
-                />
-                <div
-                  className="aspect-[3/2] rounded-[2px] bg-[var(--color-muted)]"
-                  style={{ opacity: 0.5 }}
-                />
+                <div className="aspect-[3/2] rounded-[2px] bg-[var(--color-muted)] opacity-50" />
+                <div className="aspect-[3/2] rounded-[2px] bg-[var(--color-muted)] opacity-50" />
               </div>
             </div>
             {/* Nedenunder: spejlvendt — to mindre stablet til venstre + stor hero til højre */}
             <div className="grid grid-cols-3 gap-1">
               <div className="flex flex-col gap-1">
-                <div
-                  className="aspect-[3/2] rounded-[2px] bg-[var(--color-muted)]"
-                  style={{ opacity: 0.5 }}
-                />
-                <div
-                  className="aspect-[3/2] rounded-[2px] bg-[var(--color-muted)]"
-                  style={{ opacity: 0.5 }}
-                />
+                <div className="aspect-[3/2] rounded-[2px] bg-[var(--color-muted)] opacity-50" />
+                <div className="aspect-[3/2] rounded-[2px] bg-[var(--color-muted)] opacity-50" />
               </div>
-              <div
-                className="col-span-2 aspect-[3/2] rounded-[2px] bg-[var(--color-muted)]"
-                style={{ opacity: 0.55 }}
-              />
+              <div className="col-span-2 aspect-[3/2] rounded-[2px] bg-[var(--color-muted)] opacity-55" />
             </div>
           </div>
         </motion.div>
 
         {/* NU — modigt one-column med prominent reels */}
-        <div>
+        <div className="w-[170px]">
           <p className="mb-2 text-[9px] font-semibold uppercase tracking-[0.22em] text-[var(--color-lilla)]">
             Nu · One-column
           </p>
@@ -277,10 +266,7 @@ function CaseForside() {
                     <p className="text-[9px] font-semibold uppercase tracking-[0.22em] text-[var(--color-lilla)]">
                       Reel
                     </p>
-                    <div
-                      className="h-[6px] rounded-sm bg-[var(--color-lilla)]"
-                      style={{ width: "55%", opacity: 0.35 }}
-                    />
+                    <div className="h-[6px] w-[55%] rounded-sm bg-[var(--color-lilla)] opacity-35" />
                   </motion.div>
                 );
               }
@@ -334,7 +320,7 @@ function CaseBruger() {
 
   return (
     <div className="mt-4">
-      <div className="flex flex-wrap items-center justify-center gap-4 md:gap-7">
+      <div className="flex flex-col items-center gap-5 md:flex-row md:flex-wrap md:justify-center md:gap-7">
         {/* 1. HUSETS BEHOV */}
         <motion.div
           initial={{ opacity: 0, x: -6 }}
@@ -417,31 +403,32 @@ function CaseBruger() {
 }
 
 function Arrow({ delay }: { delay: number }) {
+  // Rotation skal sidde på wrapperen — framer-motion ejer transform på selve motion.svg,
+  // og inline transform vinder over Tailwinds rotate-utility.
   return (
-    <motion.svg
-      initial={{ opacity: 0, scaleX: 0 }}
-      whileInView={{ opacity: 1, scaleX: 1 }}
-      viewport={{ once: true, margin: "-10%" }}
-      transition={{ ...pair, delay }}
-      viewBox="0 0 28 8"
-      className="h-2 w-7 origin-left text-[var(--color-lilla)] md:w-9"
-      aria-hidden
-    >
-      <line
-        x1="0"
-        y1="4"
-        x2="22"
-        y2="4"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeOpacity="0.7"
-      />
-      <path
-        d="M 20 1 L 26 4 L 20 7 Z"
-        fill="currentColor"
-      />
-    </motion.svg>
+    <div className="rotate-90 md:rotate-0">
+      <motion.svg
+        initial={{ opacity: 0, scale: 0.4 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, margin: "-10%" }}
+        transition={{ ...pair, delay }}
+        viewBox="0 0 28 8"
+        className="h-2 w-7 text-[var(--color-lilla)] md:w-9"
+        aria-hidden
+      >
+        <line
+          x1="0"
+          y1="4"
+          x2="22"
+          y2="4"
+          stroke="currentColor"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeOpacity="0.7"
+        />
+        <path d="M 20 1 L 26 4 L 20 7 Z" fill="currentColor" />
+      </motion.svg>
+    </div>
   );
 }
 
