@@ -7,12 +7,12 @@ import { pair } from "@/lib/motion";
 type NavLink = { href: string; label: string; activeIds?: readonly string[] };
 
 const links: readonly NavLink[] = [
+  { href: "#manifest", label: "Projektleder-praksis" },
   {
     href: "#ai-praksis",
     label: "AI-praksis",
-    activeIds: ["ai-praksis", "tænker", "arbejder", "skills"],
+    activeIds: ["ai-praksis", "tænker", "arbejder", "skills", "projekter"],
   },
-  { href: "#projekter", label: "Projekter" },
   { href: "#cv", label: "CV" },
   { href: "#kontakt", label: "Kontakt" },
 ];

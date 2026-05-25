@@ -2,6 +2,7 @@ import { Hero } from "@/components/hero";
 import { HowIWork } from "@/components/how-i-work";
 import { HowIThink } from "@/components/how-i-think";
 import { HowIBuildSkills } from "@/components/how-i-build-skills";
+import { Manifest } from "@/components/manifest";
 import { Projects } from "@/components/projects";
 import { CvConstellation } from "@/components/cv-constellation";
 import { Contact } from "@/components/contact";
@@ -12,6 +13,7 @@ export default function Page() {
     <main>
       <TopNav />
       <Hero />
+      <Manifest />
       <section
         id="ai-praksis"
         className="mx-auto w-full max-w-3xl scroll-mt-24 px-6 pb-16 pt-16 md:pb-24 md:pt-24"
@@ -24,9 +26,9 @@ export default function Page() {
           <HowIThink />
           <HowIWork />
           <HowIBuildSkills />
+          <Projects />
         </div>
       </section>
-      <Projects />
       <CvConstellation />
       <Contact />
     </main>

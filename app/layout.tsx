@@ -13,11 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Frederikke Schmidt — AI frontend-udvikler",
+  title: "Frederikke Schmidt — Teknisk projektleder & produktejer",
   description:
-    "Portfolio og CV. Jeg bygger produkter med AI som medskaber — frontend-håndværk, agent-workflows og ejerskab fra idé til færdig løsning.",
+    "Portfolio og CV. Teknisk projektleder og produktejer — fører projekter fra idé til lanceret produkt, med 7+ års frontend og daglig praksis med AI som fundament.",
   openGraph: {
-    title: "Frederikke Schmidt — AI frontend-udvikler",
+    title: "Frederikke Schmidt — Teknisk projektleder & produktejer",
     description:
       "Portfolio og CV. Bygget med Claude Code, Next.js, shadcn/ui og Framer Motion.",
     type: "website",

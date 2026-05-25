@@ -55,9 +55,9 @@ export function Section({
           </h3>
         ) : null}
         {intro ? (
-          <p className="mb-6 max-w-2xl text-sm leading-relaxed text-[var(--color-muted-foreground)] md:text-[0.95rem]">
+          <div className="mb-6 max-w-2xl space-y-3 text-sm leading-relaxed text-[var(--color-muted-foreground)] md:text-[0.95rem]">
             {intro}
-          </p>
+          </div>
         ) : null}
         {children}
       </motion.section>

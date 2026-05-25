@@ -1,6 +1,6 @@
 export const profile = {
   name: "Frederikke Schmidt",
-  role: "AI frontend-udvikler",
+  role: "Teknisk projektleder & produktejer",
   location: "8250 Egå",
   email: "fredeschmidt92@gmail.com",
   phone: "26 20 63 32",

@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { ArrowDown, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TriangleDiagram } from "@/components/triangle-diagram";
 import { profile } from "@/lib/profile";
 import { pair } from "@/lib/motion";
 
@@ -29,24 +29,7 @@ export function Hero() {
         />
       </div>
       <div className="relative mx-auto w-full max-w-2xl text-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ ...pair, delay: 0.05 }}
-          className="mb-5 inline-block"
-        >
-          <div className="relative h-28 w-28 overflow-hidden rounded-full border border-[var(--color-border)] bg-[var(--color-card)] shadow-[0_0_40px_-10px_var(--color-lilla)]">
-            <Image
-              src="/frederikke.jpg"
-              alt="Frederikke Schmidt"
-              fill
-              priority
-              sizes="112px"
-              className="object-cover"
-              style={{ objectPosition: "50% 25%" }}
-            />
-          </div>
-        </motion.div>
+        <TriangleDiagram className="mb-8" />
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
@@ -66,16 +49,22 @@ export function Hero() {
           {profile.role}
         </motion.p>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.55 }}
-          className="mx-auto mb-8 max-w-lg text-balance leading-relaxed text-[var(--color-muted-foreground)]"
+          className="mx-auto mb-8 max-w-lg space-y-3 text-balance leading-relaxed text-[var(--color-muted-foreground)]"
         >
-          Jeg tager idéer fra rå drøm til færdigt produkt. Erfaren
-          frontend-udvikler, teknisk projektleder og skaber med AI — så
-          intet går tabt mellem idé, plan og kode.
-        </motion.p>
+          <p>
+            Jeg fører projekter fra idé til lanceret produkt ved at bygge
+            bro mellem teknik, forretning og brugere.
+          </p>
+          <p>
+            Med 7+ års frontend-erfaring, solid UX-forståelse og daglig
+            praksis med AI har jeg fundamentet til at gøre det med faglig
+            tyngde og autoritet.
+          </p>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
