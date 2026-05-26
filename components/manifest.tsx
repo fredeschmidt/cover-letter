@@ -60,8 +60,7 @@ function CaseBindeled() {
             strokeLinecap="round"
             fill="none"
             initial={{ pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
+            animate={{ pathLength: 1 }}
             transition={{ duration: 1.6, delay: 0.1, ease: "easeInOut" }}
           />
 
@@ -72,8 +71,7 @@ function CaseBindeled() {
             r={3.4}
             fill={stroke}
             initial={{ opacity: 0, scale: 0 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ ...pair, delay: 0.05 }}
           />
 
@@ -82,8 +80,7 @@ function CaseBindeled() {
               giver samme visuelle størrelse på bredere skærme. Gælder også de øvrige <text>. */}
           <motion.g
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
+            animate={{ opacity: 1 }}
             transition={{ ...pair, delay: 0.15 }}
           >
             <text
@@ -96,15 +93,14 @@ function CaseBindeled() {
                 fontWeight: 500,
               }}
             >
-              FEJL, LAV TILLID I HUSET
+              FRUSTRATION · LAV TILLID I HUSET
             </text>
           </motion.g>
 
           {/* Markør: lille vertikal tick + label "JEG TRÅDTE IND" */}
           <motion.g
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
+            animate={{ opacity: 1 }}
             transition={{ ...pair, delay: 0.7 }}
           >
             <line
@@ -138,8 +134,7 @@ function CaseBindeled() {
             r={3.4}
             fill={stroke}
             initial={{ opacity: 0, scale: 0 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ ...pair, delay: 1.5 }}
             style={{ filter: `drop-shadow(0 0 6px ${stroke})` }}
           />
@@ -147,8 +142,7 @@ function CaseBindeled() {
           {/* Slut-label: forankret ved slut-prikken, bund-højre */}
           <motion.g
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
+            animate={{ opacity: 1 }}
             transition={{ ...pair, delay: 1.65 }}
           >
             <text

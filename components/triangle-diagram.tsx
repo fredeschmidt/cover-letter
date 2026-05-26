@@ -81,8 +81,7 @@ export function TriangleDiagram({ className }: { className?: string }) {
             strokeLinecap="round"
             fill="none"
             initial={{ pathLength: 0, opacity: 0 }}
-            whileInView={{ pathLength: 1, opacity: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
+            animate={{ pathLength: 1, opacity: 1 }}
             transition={{ duration: 1.1, delay: 0.2 + i * 0.18, ease: "easeInOut" }}
           />
         ))}
@@ -130,8 +129,7 @@ export function TriangleDiagram({ className }: { className?: string }) {
             r="1.4"
             fill={stroke}
             initial={{ opacity: 0, scale: 0 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-10%" }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ ...pair, delay: 1.0 + i * 0.12 }}
           />
         ))}
@@ -140,8 +138,7 @@ export function TriangleDiagram({ className }: { className?: string }) {
       {/* Center — Frederikke (placeret hvor løkkerne mødes, SVG y=98 → 54.4% af 180) */}
       <motion.div
         initial={{ opacity: 0, scale: 0.6 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true, margin: "-10%" }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ ...pair, delay: 0.1 }}
         className="absolute left-1/2 top-[54.4%] -translate-x-1/2 -translate-y-1/2"
       >
@@ -190,8 +187,7 @@ function PillarLabel({
   return (
     <motion.div
       initial={{ opacity: 0, y: 4 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ ...pair, delay }}
       className={`absolute ${posClass}`}
     >
