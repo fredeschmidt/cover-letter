@@ -13,10 +13,10 @@ export function SectionHeading({
   // sub-zoner (WhileWaitingList, ActivitiesList) markerer separation med
   // border-t-divider i stedet for et nedtonet heading-niveau.
   return (
-    <h3 className="mb-4 flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.18em] text-[var(--color-foreground)]">
+    <h2 className="mb-4 flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.18em] text-[var(--color-foreground)]">
       <Icon className="h-4 w-4" aria-hidden />
       {children}
-    </h3>
+    </h2>
   );
 }
 

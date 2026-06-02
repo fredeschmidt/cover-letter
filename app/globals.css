@@ -151,3 +151,17 @@ html, body { overflow-x: clip; }
   50%      { box-shadow: 0 0 0 8px transparent; }
 }
 .dot-pulse { animation: dot-pulse 2s ease-out infinite; }
+
+/* Respektér OS-indstillingen "reducér bevægelse": stop løbende animationer
+   (aurora-orbs, dot-pulse), neutralisér transitions og slå smooth-scroll fra,
+   så vestibulær-følsomme brugere ikke rammes af bevægelse (WCAG 2.3.3). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

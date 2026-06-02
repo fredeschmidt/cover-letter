@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import {
   draftApplications,
@@ -24,6 +24,17 @@ import { SUList, WhileWaitingList } from "./su-list";
 
 export function AuDemoClient() {
   const [activePhase, setActivePhase] = useState<JourneyPhaseId>("interested");
+  // Respekterer OS-indstillingen "reducér bevægelse": når den er slået til
+  // sættes transition-varigheden til 0 og exit-translaten droppes, så fase-
+  // skiftet sker uden synlig bevægelse (WCAG 2.3.3).
+  //
+  // useReducedMotion() læser en media query der kun findes på klienten — på
+  // serveren returnerer den false. Derfor MÅ den ikke bruges i `initial`, som
+  // indgår i server-HTML'en: ellers ville server (opacity 0) og klient
+  // (opacity 1) ikke matche → hydration-fejl. `initial` holdes statisk, og
+  // reduceMotion bruges kun i `transition`/`exit`, der først anvendes efter
+  // mount og derfor ikke påvirker den server-renderede markup.
+  const reduceMotion = useReducedMotion();
 
   const activeIndex = journeyPhases.findIndex((p) => p.id === activePhase);
   const programs = savedPrograms.filter((p) => p.phaseId === activePhase);
@@ -47,6 +58,13 @@ export function AuDemoClient() {
         }}
       />
       <main className="relative mx-auto w-full max-w-5xl px-5 pb-24 pt-10 md:px-6 md:pt-14">
+        {/* Annoncerer fase-skiftet for skærmlæsere. Hele indholdskolonnen
+            swappes ved fase-skift via AnimatePresence, men det sker tavst for
+            assisterende teknologi — denne stabile, visuelt skjulte live-region
+            udsender en kort besked om hvilken fase der nu vises (WCAG 4.1.3). */}
+        <div aria-live="polite" className="sr-only">
+          {`Fase ${activeIndex + 1}: ${journeyPhases[activeIndex]?.shortLabel ?? ""}`}
+        </div>
         {/* Demo-meta: portfolio-konteksten lever uden for personaen "Astrid",
             så den får sit eget visuelle lag øverst — let blå tint + lilla
             border-tone trækker den ud af det neutrale indhold uden at
@@ -57,7 +75,7 @@ export function AuDemoClient() {
           aria-label="Om demoen"
           className="mb-8 rounded-2xl border border-[var(--color-lilla)]/20 bg-[var(--color-lilla-soft)] px-4 py-4 md:px-5 md:py-4"
         >
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-lilla)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-lilla-dim)]">
             Om demoen
           </p>
           <p className="mt-2.5 text-sm leading-snug text-[var(--color-foreground)]">
@@ -112,8 +130,8 @@ export function AuDemoClient() {
                 key={activePhase}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
+                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+                transition={{ duration: reduceMotion ? 0 : 0.22, ease: "easeOut" }}
                 // max-w-md strammer indholdskolonnen så chevronerne sidder
                 // tæt på teksten frem for i højre kant af grid-kolonnen.
                 // Efter fjernelse af dato-meta passer 448px tæt til længste

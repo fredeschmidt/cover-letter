@@ -136,9 +136,9 @@ function AcceptedProgramHero({ program }: { program: SavedProgram }) {
       <p className="mt-4 text-sm text-[var(--color-muted-foreground)]">
         Du er blevet optaget på
       </p>
-      <h4 className="mt-1 text-2xl font-semibold leading-tight text-[var(--color-foreground)] md:text-3xl">
+      <h3 className="mt-1 text-2xl font-semibold leading-tight text-[var(--color-foreground)] md:text-3xl">
         {program.title}
-      </h4>
+      </h3>
       <p className="mt-5 text-sm text-[var(--color-muted-foreground)]">
         {program.deadline}
       </p>
