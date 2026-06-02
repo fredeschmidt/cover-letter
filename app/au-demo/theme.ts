@@ -21,9 +21,9 @@ export const auDemoTheme = {
   "--color-muted": "#eef1f6",
   "--color-muted-foreground": "#5b6573",
   "--color-border": "rgba(15, 23, 42, 0.08)",
-  "--color-lilla": "#2563eb",
-  "--color-lilla-dim": "#1d4ed8",
-  "--color-lilla-soft": "rgba(37, 99, 235, 0.10)",
+  "--color-brand": "#2563eb",
+  "--color-brand-dim": "#1d4ed8",
+  "--color-brand-soft": "rgba(37, 99, 235, 0.10)",
   "--color-done-dim": "#047857",
   "--color-done-soft": "rgba(16, 185, 129, 0.14)",
 } as CSSProperties;

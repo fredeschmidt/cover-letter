@@ -75,7 +75,9 @@ app/au-demo/
 ├── README.md                    Denne fil
 └── components/
     ├── au-demo-client.tsx       Root: state, layout, fase-skift-animation. Eneste "use client".
-    ├── shared.tsx               SectionHeading + RowChevron (delt på tværs af sektioner)
+    ├── shared.tsx               Delte primitiver: Row (inert klikbar række),
+    │                            StatusIcon (done/urgent/none), RowTitle,
+    │                            SectionHeading, RowChevron
     ├── phase-side-nav.tsx       Sidemenu med de tre faser
     ├── study-search-bar.tsx     Søgefelt + hovedområde-chips (kun i "interested")
     ├── saved-programs-list.tsx  Uddannelseslisten + dens fase-varianter (kladde/afsendt/optaget)
@@ -94,8 +96,9 @@ Tilføj derfor ikke `"use client"` til de øvrige filer.
 ## Bevidste prototype-genveje (IKKE bugs)
 
 - **Inaktive links:** klikbare rækker er `<a href="#">` med `e.preventDefault()`
-  (og chips/søgefelt-knapper med `preventDefault`). Der er ingen reel navigation —
-  demoen viser flow og hierarki, ikke fungerende destinationer.
+  (centraliseret i `Row` i `shared.tsx`; chips/søgefelt-knapper bruger samme
+  `preventDefault`). Der er ingen reel navigation — demoen viser flow og
+  hierarki, ikke fungerende destinationer.
 - **Fast "i dag":** `demoToday = "2026-03-08"` i `data.ts` er hardcoded i stedet
   for `Date.now()`, så frist-countdowns er stabile og marts-fristen altid føles
   akut, uanset hvornår demoen åbnes.

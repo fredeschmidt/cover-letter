@@ -24,7 +24,7 @@ export function PhaseSideNav({
                 aria-current={isActive ? "step" : undefined}
                 onClick={() => onChange(phase.id)}
                 className={cn(
-                  "group flex w-full flex-col items-center gap-1.5 rounded-xl px-1 py-2 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] md:flex-row md:gap-3 md:px-3 md:py-2.5 md:text-left",
+                  "group flex w-full flex-col items-center gap-1.5 rounded-xl px-1 py-2 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] md:flex-row md:gap-3 md:px-3 md:py-2.5 md:text-left",
                   !isActive ? "hover:bg-[var(--color-muted)]" : "",
                 )}
               >
@@ -32,10 +32,10 @@ export function PhaseSideNav({
                   className={cn(
                     "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-semibold tabular-nums transition-colors",
                     isActive
-                      ? "border-[var(--color-lilla)] bg-[var(--color-lilla)] text-white"
+                      ? "border-[var(--color-brand)] bg-[var(--color-brand)] text-white"
                       : isPast
-                      ? "border-[var(--color-lilla)] bg-[var(--color-card)] text-[var(--color-lilla-dim)]"
-                      : "border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-muted-foreground)] group-hover:border-[var(--color-lilla)]/60",
+                      ? "border-[var(--color-brand)] bg-[var(--color-card)] text-[var(--color-brand-dim)]"
+                      : "border-[var(--color-border)] bg-[var(--color-card)] text-[var(--color-muted-foreground)] group-hover:border-[var(--color-brand)]/60",
                   )}
                 >
                   {isPast ? (

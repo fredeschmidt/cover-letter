@@ -6,6 +6,7 @@ export type JourneyPhase = {
 };
 
 export type SavedProgram = {
+  id: string;
   phaseId: JourneyPhaseId;
   title: string;
   /** Hovedtekst for deadline-pille, fx "Frist 15. marts" eller "Svar 26. juli" */
@@ -30,10 +31,12 @@ export type PhaseActivity = {
 
 export type DraftApplication = {
   phaseId: JourneyPhaseId;
-  programTitle: string;
-  /** Ratio som primary fact, fx "3 af 5" */
-  ratio: string;
-  progress: number;
+  /** Stabil reference til SavedProgram.id (i stedet for at matche på title) */
+  programId: string;
+  /** Antal udfyldte sektioner — primary fact */
+  filled: number;
+  /** Samlet antal sektioner i kladden */
+  total: number;
 };
 
 export type UploadedDocument = {
@@ -56,6 +59,10 @@ export type PhaseConfig = {
   programsTitle: string;
   /** Visuel tone på saved-program-rækker for denne fase */
   programsTone: "default" | "submitted" | "accepted";
+  /** h1-hilsen øverst på siden, skifter pr. fase */
+  greeting: string;
+  /** Fase 2: slå SU + aktiviteter sammen i "Mens du venter" i stedet for at vise dem hver for sig */
+  mergeWaitingSections?: boolean;
 };
 
 export const journeyPhases: JourneyPhase[] = [
@@ -65,13 +72,27 @@ export const journeyPhases: JourneyPhase[] = [
 ];
 
 export const phaseConfigs: Record<JourneyPhaseId, PhaseConfig> = {
-  interested: { programsTitle: "Dine ansøgninger", programsTone: "default" },
-  applied: { programsTitle: "Sendte ansøgninger", programsTone: "submitted" },
-  accepted: { programsTitle: "Optaget på", programsTone: "accepted" },
+  interested: {
+    programsTitle: "Dine ansøgninger",
+    programsTone: "default",
+    greeting: "Velkommen Astrid",
+  },
+  applied: {
+    programsTitle: "Sendte ansøgninger",
+    programsTone: "submitted",
+    greeting: "Velkommen tilbage, Astrid",
+    mergeWaitingSections: true,
+  },
+  accepted: {
+    programsTitle: "Optaget på",
+    programsTone: "accepted",
+    greeting: "Tillykke Astrid",
+  },
 };
 
 export const savedPrograms: SavedProgram[] = [
   {
+    id: "datavidenskab",
     phaseId: "interested",
     title: "Datavidenskab",
     deadline: "Frist 15. marts",
@@ -79,6 +100,7 @@ export const savedPrograms: SavedProgram[] = [
     isUrgent: true,
   },
   {
+    id: "cognitive-science",
     phaseId: "interested",
     title: "Cognitive Science",
     deadline: "Frist 15. marts",
@@ -86,18 +108,21 @@ export const savedPrograms: SavedProgram[] = [
     isUrgent: true,
   },
   {
+    id: "informationsvidenskab",
     phaseId: "interested",
     title: "Informationsvidenskab",
     deadline: "Frist 5. juli",
   },
 
   {
+    id: "datavidenskab-1",
     phaseId: "applied",
     title: "Datavidenskab — 1. prioritet",
     deadline: "Svar 26. juli",
     submittedDate: "12. marts",
   },
   {
+    id: "cognitive-science-2",
     phaseId: "applied",
     title: "Cognitive Science — 2. prioritet",
     deadline: "Svar 26. juli",
@@ -105,6 +130,7 @@ export const savedPrograms: SavedProgram[] = [
   },
 
   {
+    id: "datavidenskab-bachelor",
     phaseId: "accepted",
     title: "Datavidenskab — bachelor",
     deadline: "Studiestart 1. september",
@@ -114,21 +140,21 @@ export const savedPrograms: SavedProgram[] = [
 export const draftApplications: DraftApplication[] = [
   {
     phaseId: "interested",
-    programTitle: "Datavidenskab",
-    ratio: "3 af 5",
-    progress: 60,
+    programId: "datavidenskab",
+    filled: 3,
+    total: 5,
   },
   {
     phaseId: "interested",
-    programTitle: "Cognitive Science",
-    ratio: "1 af 5",
-    progress: 20,
+    programId: "cognitive-science",
+    filled: 1,
+    total: 5,
   },
   {
     phaseId: "interested",
-    programTitle: "Informationsvidenskab",
-    ratio: "0 af 5",
-    progress: 0,
+    programId: "informationsvidenskab",
+    filled: 0,
+    total: 5,
   },
 ];
 

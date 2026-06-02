@@ -73,9 +73,9 @@ export function AuDemoClient() {
             læseren ved hvad de skal gøre med siden. */}
         <aside
           aria-label="Om demoen"
-          className="mb-8 rounded-2xl border border-[var(--color-lilla)]/20 bg-[var(--color-lilla-soft)] px-4 py-4 md:px-5 md:py-4"
+          className="mb-8 rounded-2xl border border-[var(--color-brand)]/20 bg-[var(--color-brand-soft)] px-4 py-4 md:px-5 md:py-4"
         >
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-lilla-dim)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-dim)]">
             Om demoen
           </p>
           <p className="mt-2.5 text-sm leading-snug text-[var(--color-foreground)]">
@@ -94,11 +94,7 @@ export function AuDemoClient() {
 
         <div className="mb-12">
           <h1 className="display text-balance text-3xl font-medium leading-[1.1] md:text-4xl">
-            {activePhase === "interested"
-              ? "Velkommen Astrid"
-              : activePhase === "accepted"
-              ? "Tillykke Astrid"
-              : "Velkommen tilbage, Astrid"}
+            {phaseConfig.greeting}
           </h1>
         </div>
 
@@ -151,7 +147,7 @@ export function AuDemoClient() {
                 {/* Fase 2 (applied) slår SU + Info sammen til "Mens du venter"
                     — begge er sekundære i ventefasen og hører hjemme under
                     samme overskrift. Andre faser viser dem hver for sig. */}
-                {activePhase === "applied" ? (
+                {phaseConfig.mergeWaitingSections ? (
                   <WhileWaitingList suItems={su} activities={activities} />
                 ) : (
                   <>

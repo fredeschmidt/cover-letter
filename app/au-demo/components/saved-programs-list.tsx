@@ -1,5 +1,4 @@
 import {
-  Check,
   ExternalLink,
   FilePen,
   GraduationCap,
@@ -13,7 +12,7 @@ import {
   type SavedProgram,
 } from "../data";
 import { daysUntil } from "../theme";
-import { RowChevron, SectionHeading } from "./shared";
+import { Row, RowTitle, SectionHeading, StatusIcon } from "./shared";
 
 export function SavedProgramsList({
   programs,
@@ -47,7 +46,7 @@ export function SavedProgramsList({
         )}
       >
         {programs.map((program) => {
-          const draft = drafts.find((d) => d.programTitle === program.title);
+          const draft = drafts.find((d) => d.programId === program.id);
           return (
             <li key={program.title}>
               {tone === "accepted" ? (
@@ -72,38 +71,38 @@ function DraftProgress({ draft }: { draft: DraftApplication }) {
   // uden at læse tal. Tom kladde (0%) får "Ikke startet" i lilla som
   // handlings-invitation. Den præcise ratio bevares i aria-label til screen
   // readers.
-  const isEmpty = draft.progress === 0;
-  const ratioParts = draft.ratio.match(/(\d+)\s*af\s*(\d+)/i);
-  const filled = ratioParts ? Number(ratioParts[1]) : 0;
-  const total = ratioParts ? Number(ratioParts[2]) : 5;
+  const isEmpty = draft.filled === 0;
+  const ratio = `${draft.filled} af ${draft.total}`;
+  const progress =
+    draft.total > 0 ? Math.round((draft.filled / draft.total) * 100) : 0;
 
   if (isEmpty) {
     return (
-      <span className="shrink-0 text-[11px] font-medium text-[var(--color-lilla)]">
+      <span className="shrink-0 text-[11px] font-medium text-[var(--color-brand)]">
         Ikke startet
       </span>
     );
   }
   return (
     <span className="flex shrink-0 items-center gap-2.5">
-      <span className="text-[11px] font-medium text-[var(--color-lilla)]">
+      <span className="text-[11px] font-medium text-[var(--color-brand)]">
         Igang
       </span>
       <span
         className="flex items-center gap-[3px]"
         role="progressbar"
-        aria-valuenow={draft.progress}
+        aria-valuenow={progress}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label={`Kladde ${draft.ratio} sektioner udfyldt`}
+        aria-label={`Kladde ${ratio} sektioner udfyldt`}
       >
-        {Array.from({ length: total }).map((_, i) => (
+        {Array.from({ length: draft.total }).map((_, i) => (
           <span
             key={i}
             className={cn(
               "block h-1 w-2.5 rounded-full transition-colors",
-              i < filled
-                ? "bg-[var(--color-lilla)]"
+              i < draft.filled
+                ? "bg-[var(--color-brand)]"
                 : "bg-[var(--color-muted)]",
             )}
             aria-hidden
@@ -125,11 +124,11 @@ function AcceptedProgramHero({ program }: { program: SavedProgram }) {
     <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.08)] md:p-8">
       <div className="flex items-center gap-2">
         <Sparkles
-          className="h-4 w-4 shrink-0 text-[var(--color-lilla)]"
+          className="h-4 w-4 shrink-0 text-[var(--color-brand)]"
           strokeWidth={2}
           aria-hidden
         />
-        <span className="text-sm font-semibold text-[var(--color-lilla)]">
+        <span className="text-sm font-semibold text-[var(--color-brand)]">
           Tillykke!
         </span>
       </div>
@@ -144,7 +143,7 @@ function AcceptedProgramHero({ program }: { program: SavedProgram }) {
       </p>
       <button
         type="button"
-        className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--color-lilla)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-lilla-dim)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)]"
+        className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--color-brand)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-brand-dim)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)]"
       >
         Gå til MitStudie
         <ExternalLink className="h-3.5 w-3.5" aria-hidden />
@@ -179,38 +178,35 @@ function SavedProgramRow({
       : `Frist ${countdownDays} dage`;
 
   const ariaParts = [program.title];
-  if (draft) ariaParts.push(`kladde ${draft.ratio} udfyldt`);
+  if (draft) ariaParts.push(`kladde ${draft.filled} af ${draft.total} udfyldt`);
   if (showCountdown) ariaParts.push(`${countdownLabel}, frist nærmer sig`);
   else ariaParts.push(program.deadline);
   const ariaLabel = ariaParts.join(" — ");
 
   return (
-    <a
-      href="#"
-      onClick={(e) => e.preventDefault()}
-      aria-label={ariaLabel}
-      className="group flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-[var(--color-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-lilla)]"
+    <Row
+      density="comfortable"
+      ariaLabel={ariaLabel}
+      trailing={
+        showCountdown ? (
+          <span className="shrink-0 text-[11px] font-medium tabular-nums text-[var(--color-brand)]">
+            {countdownLabel}
+          </span>
+        ) : (
+          <span className="shrink-0 text-[11px] tabular-nums text-[var(--color-muted-foreground)]">
+            {program.deadline}
+          </span>
+        )
+      }
     >
       {/* Venstre kolonne: titel + (evt.) kladde-fremdrift stablet under.
           Min-w-0 + flex-1 sikrer at lange titler trunker frem for at presse
           countdown'et ud i kanten. */}
       <span className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <span className="truncate text-sm text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-lilla)]">
-          {program.title}
-        </span>
+        <RowTitle>{program.title}</RowTitle>
         {draft ? <DraftProgress draft={draft} /> : null}
       </span>
-      {showCountdown ? (
-        <span className="shrink-0 text-[11px] font-medium tabular-nums text-[var(--color-lilla)]">
-          {countdownLabel}
-        </span>
-      ) : (
-        <span className="shrink-0 text-[11px] tabular-nums text-[var(--color-muted-foreground)]">
-          {program.deadline}
-        </span>
-      )}
-      <RowChevron />
-    </a>
+    </Row>
   );
 }
 
@@ -224,25 +220,12 @@ function SubmittedProgramRow({ program }: { program: SavedProgram }) {
     return <SavedProgramRow program={program} />;
   }
   return (
-    <a
-      href="#"
-      onClick={(e) => e.preventDefault()}
-      aria-label={program.title}
-      className="group flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-[var(--color-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-lilla)]"
+    <Row
+      density="comfortable"
+      ariaLabel={program.title}
+      leading={<StatusIcon status="done" />}
     >
-      <span
-        className="flex h-4 w-4 shrink-0 items-center justify-center"
-        aria-hidden
-      >
-        <Check
-          className="h-3.5 w-3.5 text-[var(--color-done-dim)]"
-          strokeWidth={3}
-        />
-      </span>
-      <span className="min-w-0 flex-1 truncate text-sm text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-lilla)]">
-        {program.title}
-      </span>
-      <RowChevron />
-    </a>
+      <RowTitle>{program.title}</RowTitle>
+    </Row>
   );
 }

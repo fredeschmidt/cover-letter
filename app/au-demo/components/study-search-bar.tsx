@@ -43,10 +43,10 @@ export function StudySearchBar() {
           onSubmit={(e) => e.preventDefault()}
           role="search"
           aria-label="Søg efter en uddannelse"
-          className="group flex w-full items-center gap-2.5 rounded-full border border-[var(--color-border)] bg-[var(--color-card)] py-1.5 pl-4 pr-1.5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.08)] transition-colors focus-within:border-[var(--color-lilla)] focus-within:ring-2 focus-within:ring-[var(--color-lilla)]/30"
+          className="group flex w-full items-center gap-2.5 rounded-full border border-[var(--color-border)] bg-[var(--color-card)] py-1.5 pl-4 pr-1.5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.08)] transition-colors focus-within:border-[var(--color-brand)] focus-within:ring-2 focus-within:ring-[var(--color-brand)]/30"
         >
           <Search
-            className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)] transition-colors group-focus-within:text-[var(--color-lilla)]"
+            className="h-4 w-4 shrink-0 text-[var(--color-muted-foreground)] transition-colors group-focus-within:text-[var(--color-brand)]"
             aria-hidden
           />
           <input
@@ -58,7 +58,7 @@ export function StudySearchBar() {
           <button
             type="submit"
             aria-label="Søg"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-lilla)] text-white transition-colors hover:bg-[var(--color-lilla-dim)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)]"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand)] text-white transition-colors hover:bg-[var(--color-brand-dim)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)]"
           >
             <ArrowRight className="h-4 w-4" aria-hidden />
           </button>
@@ -74,10 +74,10 @@ export function StudySearchBar() {
                 key={label}
                 type="button"
                 onClick={(e) => e.preventDefault()}
-                className="group inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-card)] px-3.5 py-2 text-xs font-medium text-[var(--color-foreground)] shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-colors hover:border-[var(--color-lilla)] hover:bg-[var(--color-lilla-soft)] hover:text-[var(--color-lilla)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-lilla)]"
+                className="group inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-card)] px-3.5 py-2 text-xs font-medium text-[var(--color-foreground)] shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-colors hover:border-[var(--color-brand)] hover:bg-[var(--color-brand-soft)] hover:text-[var(--color-brand)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)]"
               >
                 <Icon
-                  className="h-3.5 w-3.5 shrink-0 text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-lilla)]"
+                  className="h-3.5 w-3.5 shrink-0 text-[var(--color-muted-foreground)] transition-colors group-hover:text-[var(--color-brand)]"
                   strokeWidth={1.75}
                   aria-hidden
                 />
