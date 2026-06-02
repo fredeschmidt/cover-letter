@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AuDemoClient } from "./au-demo-client";
+import { AuDemoClient } from "./components/au-demo-client";
 
 export const metadata: Metadata = {
   title: "Min AU-rejse — UX/frontend-demo",
