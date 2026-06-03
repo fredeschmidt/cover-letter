@@ -92,14 +92,19 @@ export function AuDemoClient() {
           </p>
         </aside>
 
-        <div className="mb-12">
-          <h1 className="display text-balance text-3xl font-medium leading-[1.1] md:text-4xl">
-            {phaseConfig.greeting}
-          </h1>
-        </div>
+        {/* På desktop er overskriften en fuld-bredde række (col-span-2) over
+            grid'en: nav til venstre, indhold til højre. På mobil stables
+            kolonnerne som en flex-column, og order-utilities flytter
+            overskriften NED under fase-navigationen — brugeren ser trinene
+            først og derefter "Velkommen <navn>". */}
+        <div className="flex flex-col gap-10 md:grid md:grid-cols-[280px_1fr] md:gap-x-10 md:gap-y-12 lg:grid-cols-[320px_1fr] lg:gap-x-16">
+          <div className="order-2 md:order-none md:col-span-2">
+            <h1 className="display text-balance text-3xl font-medium leading-[1.1] md:text-4xl">
+              {phaseConfig.greeting}
+            </h1>
+          </div>
 
-        <div className="grid gap-10 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr] lg:gap-16">
-          <div className="md:sticky md:top-6 md:self-start">
+          <div className="order-1 md:order-none md:sticky md:top-6 md:self-start">
             <div className="md:p-2">
               <PhaseSideNav
                 active={activePhase}
@@ -113,7 +118,7 @@ export function AuDemoClient() {
               nav-knaps tekstmidte: knappen har 8px wrapper-padding + 10px
               egen py + ~12px halv-cirkel = ~30px til midten, overskriften
               til højre lå før klods op ad toppen. */}
-          <div className="md:pt-5">
+          <div className="order-3 md:order-none md:pt-5">
             {/* AnimatePresence + key på phase: hver fase mounter på ny så
                 fase-skiftet bliver til en synlig transformation i stedet for
                 et abrupt swap. mode="wait" sikrer at exit-animationen er

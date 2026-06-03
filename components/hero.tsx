@@ -29,7 +29,7 @@ export function Hero() {
         />
       </div>
       <div className="relative mx-auto w-full max-w-2xl text-center">
-        <TriangleDiagram className="mb-8" />
+        <TriangleDiagram className="-mb-2 md:-mb-4" />
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
